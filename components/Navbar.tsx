@@ -51,9 +51,11 @@ export const Navbar = () => {
                 Sign In
               </Link>
             ) : (
-              <Button className="rounded-full">
+              <div
+                className={cn(buttonVariants({ className: "rounded-full" }))}
+              >
                 <SignOutButton />
-              </Button>
+              </div>
             )}
           </nav>
         </div>

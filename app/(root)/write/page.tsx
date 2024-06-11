@@ -1,3 +1,13 @@
+import React from 'react'
+
+const WritePage = () => {
+  return (
+    <div>WritePage</div>
+  )
+}
+
+export default WritePage
+
 // "use client";
 // import { AnimationWrapper } from "@/components/AnimationWrapper";
 // import { Wrapper } from "@/components/Wrapper";

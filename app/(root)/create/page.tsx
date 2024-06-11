@@ -91,55 +91,53 @@ const CreatePage = () => {
   }, [sessionId, router]);
 
   useEffect(() => {
-    if (typeof window != "undefined") {
-      if (sessionId) {
-        const editor = new EditorJS({
-          holder: "editorjs",
-          data: content,
-          tools: {
-            header: {
-              class: Header,
-              config: {
-                placeholder: "Type Heading...",
-                levels: [2, 3],
-                defaultLevel: 3,
-              },
-            },
-            list: {
-              class: List,
-              inlineToolbar: true,
-            },
-            marker: {
-              class: Marker,
-            },
-            image: {
-              class: ImageTool,
-              config: {
-                uploader: {
-                  uploadByUrl: async (url: string) => ({
-                    success: 1,
-                    file: { url },
-                  }),
-                  uploadByFile: uploadImage,
-                },
-              },
-            },
-            embed: {
-              class: Embed,
-            },
-            quote: {
-              class: Quote,
+    if (sessionId) {
+      const editor = new EditorJS({
+        holder: "editorjs",
+        data: content,
+        tools: {
+          header: {
+            class: Header,
+            config: {
+              placeholder: "Type Heading...",
+              levels: [2, 3],
+              defaultLevel: 3,
             },
           },
-        });
-        setTextEditor(editor);
+          list: {
+            class: List,
+            inlineToolbar: true,
+          },
+          marker: {
+            class: Marker,
+          },
+          image: {
+            class: ImageTool,
+            config: {
+              uploader: {
+                uploadByUrl: async (url: string) => ({
+                  success: 1,
+                  file: { url },
+                }),
+                uploadByFile: uploadImage,
+              },
+            },
+          },
+          embed: {
+            class: Embed,
+          },
+          quote: {
+            class: Quote,
+          },
+        },
+      });
+      setTextEditor(editor);
 
-        return () => {
-          editor.isReady.then(() => {
-            editor.destroy();
-          });
-        };
-      }
+      return () => {
+        editor.isReady.then(() => {
+          editor.destroy();
+        });
+      };
     }
   }, [content, sessionId]);
 
@@ -163,44 +161,46 @@ const CreatePage = () => {
     }
   };
 
-  return (
-    <Wrapper className="max-w-[1000px]">
-      <Toaster />
-      <AnimationWrapper className="mt-6">
-        <div
-          className={`relative aspect-video bg-white max-w-6xl border-2 rounded-md ${
-            banner ? "border-none" : ""
-          }`}
-        >
-          <label htmlFor="uploadBanner" className="">
-            <Image
-              src={(banner as string) || defaultBanner}
-              alt="banner"
-              width={1000}
-              height={950}
-              priority
-              className="z-20 object-cover"
-            />
-            <Input
-              type="file"
-              id="uploadBanner"
-              accept=".png,.jpeg,.jpg"
-              hidden
-              className="hidden absolute"
-              onChange={handleBannerUpload}
-            />
-          </label>
-        </div>
-        <textarea
-          value={title}
-          placeholder="Blog Title"
-          onChange={(e) => setBlog({ ...blog, title: e.target.value })}
-          className="mt-10 text-4xl resize-none font-medium h-20 bg-transparent outline-none leading-tight placeholder-opacity-40 w-full overflow-y-hidden"
-        />
-        <div id="editorjs" className="bg-white text-black p-2 rounded-md" />
-      </AnimationWrapper>
-    </Wrapper>
-  );
+  if (typeof window != undefined) {
+    return (
+      <Wrapper className="max-w-[1000px]">
+        <Toaster />
+        <AnimationWrapper className="mt-6">
+          <div
+            className={`relative aspect-video bg-white max-w-6xl border-2 rounded-md ${
+              banner ? "border-none" : ""
+            }`}
+          >
+            <label htmlFor="uploadBanner" className="">
+              <Image
+                src={(banner as string) || defaultBanner}
+                alt="banner"
+                width={1000}
+                height={950}
+                priority
+                className="z-20 object-cover"
+              />
+              <Input
+                type="file"
+                id="uploadBanner"
+                accept=".png,.jpeg,.jpg"
+                hidden
+                className="hidden absolute"
+                onChange={handleBannerUpload}
+              />
+            </label>
+          </div>
+          <textarea
+            value={title}
+            placeholder="Blog Title"
+            onChange={(e) => setBlog({ ...blog, title: e.target.value })}
+            className="mt-10 text-4xl resize-none font-medium h-20 bg-transparent outline-none leading-tight placeholder-opacity-40 w-full overflow-y-hidden"
+          />
+          <div id="editorjs" className="bg-white text-black p-2 rounded-md" />
+        </AnimationWrapper>
+      </Wrapper>
+    );
+  }
 };
 
 export default CreatePage;

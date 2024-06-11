@@ -91,48 +91,57 @@ const CreatePage = () => {
   }, [sessionId, router]);
 
   useEffect(() => {
-    if (sessionId) {
-      const editor = new EditorJS({
-        holder: "editorjs",
-        data: content,
-        tools: {
-          header: {
-            class: Header,
-            config: {
-              placeholder: "Type Heading...",
-              levels: [2, 3],
-              defaultLevel: 3,
-            },
-          },
-          list: {
-            class: List,
-            inlineToolbar: true,
-          },
-          marker: {
-            class: Marker,
-          },
-          image: {
-            class: ImageTool,
-            config: {
-              uploader: {
-                uploadByUrl: async (url: string) => ({
-                  success: 1,
-                  file: { url },
-                }),
-                uploadByFile: uploadImage,
+    if (typeof window != "undefined") {
+      if (sessionId) {
+        const editor = new EditorJS({
+          holder: "editorjs",
+          data: content,
+          tools: {
+            header: {
+              class: Header,
+              config: {
+                placeholder: "Type Heading...",
+                levels: [2, 3],
+                defaultLevel: 3,
               },
             },
+            list: {
+              class: List,
+              inlineToolbar: true,
+            },
+            marker: {
+              class: Marker,
+            },
+            image: {
+              class: ImageTool,
+              config: {
+                uploader: {
+                  uploadByUrl: async (url: string) => ({
+                    success: 1,
+                    file: { url },
+                  }),
+                  uploadByFile: uploadImage,
+                },
+              },
+            },
+            embed: {
+              class: Embed,
+            },
+            quote: {
+              class: Quote,
+            },
           },
-          embed: {
-            class: Embed,
-          },
-          quote: {
-            class: Quote,
-          },
-        },
-      });
+        });
+        setTextEditor(editor);
+
+        return () => {
+          editor.isReady.then(() => {
+            editor.destroy();
+          });
+        };
+      }
     }
-  }, [content]);
+  }, [content, sessionId]);
 
   const handleBannerUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

@@ -7,8 +7,15 @@ import defaultBanner from "@/public/blog-banner.png";
 import { Wrapper } from "@/components/Wrapper";
 import toast, { Toaster } from "react-hot-toast";
 import { AnimationWrapper } from "@/components/AnimationWrapper";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import { Input } from "@/components/ui/input";
+
+import Header from "@editorjs/header";
+import ImageTool from "@editorjs/image";
+import List from "@editorjs/list";
+import Marker from "@editorjs/marker";
+import Embed from "@editorjs/embed";
+import Quote from "@editorjs/quote";
 
 interface UploadResponse {
   success: number;
@@ -81,7 +88,51 @@ const CreatePage = () => {
     if (!sessionId) {
       router.replace("/sign-in");
     }
-  });
+  }, [sessionId, router]);
+
+  useEffect(() => {
+    if (sessionId) {
+      const editor = new EditorJS({
+        holder: "editorjs",
+        data: content,
+        tools: {
+          header: {
+            class: Header,
+            config: {
+              placeholder: "Type Heading...",
+              levels: [2, 3],
+              defaultLevel: 3,
+            },
+          },
+          list: {
+            class: List,
+            inlineToolbar: true,
+          },
+          marker: {
+            class: Marker,
+          },
+          image: {
+            class: ImageTool,
+            config: {
+              uploader: {
+                uploadByUrl: async (url: string) => ({
+                  success: 1,
+                  file: { url },
+                }),
+                uploadByFile: uploadImage,
+              },
+            },
+          },
+          embed: {
+            class: Embed,
+          },
+          quote: {
+            class: Quote,
+          },
+        },
+      });
+    }
+  }, [content]);
 
   const handleBannerUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -108,8 +159,8 @@ const CreatePage = () => {
       <Toaster />
       <AnimationWrapper className="mt-6">
         <div
-          className={`relative aspect-video bg-white max-w-4xl border-4 ${
-            banner && "border-none"
+          className={`relative aspect-video bg-white max-w-6xl border-2 rounded-md ${
+            banner ? "border-none" : ""
           }`}
         >
           <label htmlFor="uploadBanner" className="">
@@ -137,6 +188,7 @@ const CreatePage = () => {
           onChange={(e) => setBlog({ ...blog, title: e.target.value })}
           className="mt-10 text-4xl resize-none font-medium h-20 bg-transparent outline-none leading-tight placeholder-opacity-40 w-full overflow-y-hidden"
         />
+        <div id="editorjs" className="bg-white text-black p-2 rounded-md" />
       </AnimationWrapper>
     </Wrapper>
   );

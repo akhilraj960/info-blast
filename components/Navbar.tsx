@@ -18,7 +18,7 @@ export const Navbar = () => {
   const { sessionId } = useAuth();
 
   return (
-    <AnimationWrapper wrapperKey={theme}>
+    <AnimationWrapper wrapperKey={theme} className="sticky w-full top-0 left-0">
       <header className="h-20 shadow-md flex items-center justify-center">
         <div className="container flex justify-between items-center">
           <Link href={"/"}>
@@ -32,7 +32,7 @@ export const Navbar = () => {
           <nav className="hidden md:flex items-center gap-10">
             <ThemeMode />
             <Link
-              href={"/write"}
+              href={"/create"}
               className={cn(
                 buttonVariants({
                   variant: "secondary",
@@ -41,7 +41,7 @@ export const Navbar = () => {
               )}
             >
               <TfiWrite />
-              write
+              create
             </Link>
             {!sessionId ? (
               <Link

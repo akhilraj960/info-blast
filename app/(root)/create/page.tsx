@@ -59,7 +59,7 @@ const uploadImage = async (file: File): Promise<UploadResponse> => {
   }
 };
 
-const page = () => {
+const CreatePage = () => {
   const [blog, setBlog] = useState<Blog>({
     title: "",
     banner: "",
@@ -142,4 +142,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default CreatePage;

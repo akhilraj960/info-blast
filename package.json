@@ -30,6 +30,7 @@
     "dayjs": "^1.11.11",
     "framer-motion": "^11.2.10",
     "lucide-react": "^0.383.0",
+    "mongoose": "^8.4.1",
     "next": "14.2.3",
     "next-themes": "^0.3.0",
     "react": "^18",

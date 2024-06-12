@@ -18,8 +18,8 @@ export const Navbar = () => {
   const { sessionId } = useAuth();
 
   return (
-    <AnimationWrapper wrapperKey={theme} className="sticky w-full top-0 left-0">
-      <header className="h-20 shadow-md flex items-center justify-center">
+    <AnimationWrapper wrapperKey={theme} className="sticky z-50  w-full top-0 left-0">
+      <header className="h-20 backdrop-blur-xl drop-shadow-sm flex items-center justify-center">
         <div className="container flex justify-between items-center">
           <Link href={"/"}>
             <Image src={logo} alt="logo" className="w-12 h-12 dark:hidden" />
@@ -32,7 +32,7 @@ export const Navbar = () => {
           <nav className="hidden md:flex items-center gap-10">
             <ThemeMode />
             <Link
-              href={"/create"}
+              href={"/write"}
               className={cn(
                 buttonVariants({
                   variant: "secondary",

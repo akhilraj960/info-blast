@@ -35,3 +35,4 @@ declare module "@editorjs/quote" {
   const Quote: ToolConstructable;
   export = Quote;
 }
+

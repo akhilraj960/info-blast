@@ -1,5 +1,3 @@
-
-
 import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
@@ -8,7 +6,9 @@ export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
 
-  console.log('hlllffsdafafadfasfasfffffffffffffffffffffffffffffffffffffffffffffffff')
+  console.log(
+    "hlllffsdafafadfasfasfffffffffffffffffffffffffffffffffffffffffffffffff"
+  );
 
   if (!WEBHOOK_SECRET) {
     throw new Error(
@@ -46,10 +46,11 @@ export async function POST(req: Request) {
       "svix-signature": svix_signature,
     }) as WebhookEvent;
 
-    console.log(evt.data);
+    console.log("evt");
+    console.log("evt", evt);
 
     if (evt.type === "user.created") {
-      console.log("user Data", evt.data);
+      console.log("user created");
     }
   } catch (err) {
     console.error("Error verifying webhook:", err);
@@ -57,7 +58,7 @@ export async function POST(req: Request) {
       status: 400,
     });
   }
- 
+
   // Do something with the payload
   // For this guide, you simply log the payload to the console
   const { id } = evt.data;

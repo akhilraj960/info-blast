@@ -139,7 +139,7 @@ const WritePage: React.FC = () => {
       setTextEditor(editor);
     };
 
-      initEditor()
+    initEditor();
 
     return () => {
       if (textEditor) {
@@ -193,12 +193,18 @@ const WritePage: React.FC = () => {
       <Toaster />
       <AnimationWrapper className="mt-4 min-h-96">
         <div
-          className={`relative aspect-video bg-white border-4 ${
-            banner && "border-none"
+          className={`relative aspect-video bg-white border-2 ${
+            banner && "border-none rounded-md"
           }`}
         >
-          <label htmlFor="uploadBanner" className="flex items-center">
-            {/* <Image src={mainBanner} alt="banner" layout="fill" className="z-20 object-cover" /> */}
+          <label htmlFor="uploadBanner" className="absolute inset-0">
+            <Image
+              src={mainBanner}
+              alt="banner"
+              fill
+              priority
+              className={banner ? "rounded-md" : "" + "z-20 object-cover"}
+            />
             <Input
               type="file"
               id="uploadBanner"

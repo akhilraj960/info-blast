@@ -11,6 +11,8 @@ import { ThemeMode } from "./ThemeMode";
 import { AnimationWrapper } from "./AnimationWrapper";
 import { useTheme } from "next-themes";
 import { SignOutButton, useAuth } from "@clerk/nextjs";
+import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "./ui/sheet";
+import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 
 export const Navbar = () => {
   const { theme } = useTheme();
@@ -18,48 +20,65 @@ export const Navbar = () => {
   const { sessionId } = useAuth();
 
   return (
-    <AnimationWrapper wrapperKey={theme} className="sticky z-50  w-full top-0 left-0">
-      <header className="h-20 backdrop-blur-xl drop-shadow-sm flex items-center justify-center">
-        <div className="container flex justify-between items-center">
-          <Link href={"/"}>
-            <Image src={logo} alt="logo" className="w-12 h-12 dark:hidden" />
-            <Image
-              src={logoSecondary}
-              alt="logo"
-              className="w-12 h-12 hidden dark:flex"
-            />
-          </Link>
-          <nav className="hidden md:flex items-center gap-10">
-            <ThemeMode />
-            <Link
-              href={"/write"}
-              className={cn(
-                buttonVariants({
-                  variant: "secondary",
-                  className: "rounded-full flex gap-1",
-                })
-              )}
-            >
-              <TfiWrite />
-              create
+    <AnimationWrapper
+      wrapperKey={theme}
+      className="sticky z-50  w-full top-0 left-0"
+    >
+      <Sheet>
+        <header className="h-20 backdrop-blur-xl drop-shadow-sm shadow-md sticky flex items-center justify-center">
+          <div className="container flex justify-between items-center">
+            <Link href={"/"}>
+              <Image src={logo} alt="logo" className="w-12 h-12 dark:hidden" />
+              <Image
+                src={logoSecondary}
+                alt="logo"
+                className="w-12 h-12 hidden dark:flex"
+              />
             </Link>
-            {!sessionId ? (
+
+            {/* SIDE MENU  */}
+            <div className="hidden max-md:flex">
+              <SheetTrigger>
+                <HamburgerMenuIcon width={25} height={25} />
+              </SheetTrigger>
+              <SheetContent className="bg-white dark:bg-black/90 dark:shadow-white/20 backdrop-blur-md border-none shadow-xl">
+                <ThemeMode />
+                <SheetHeader></SheetHeader>
+              </SheetContent>
+            </div>
+
+            <nav className="hidden md:flex items-center gap-10">
+              <ThemeMode />
               <Link
-                href={"/sign-in"}
-                className={cn(buttonVariants({ className: "rounded-full" }))}
+                href={"/write"}
+                className={cn(
+                  buttonVariants({
+                    variant: "secondary",
+                    className: "rounded-full flex gap-1",
+                  })
+                )}
               >
-                Sign In
+                <TfiWrite />
+                create
               </Link>
-            ) : (
-              <div
-                className={cn(buttonVariants({ className: "rounded-full" }))}
-              >
-                <SignOutButton />
-              </div>
-            )}
-          </nav>
-        </div>
-      </header>
+              {!sessionId ? (
+                <Link
+                  href={"/sign-in"}
+                  className={cn(buttonVariants({ className: "rounded-full" }))}
+                >
+                  Sign In
+                </Link>
+              ) : (
+                <div
+                  className={cn(buttonVariants({ className: "rounded-full" }))}
+                >
+                  <SignOutButton />
+                </div>
+              )}
+            </nav>
+          </div>
+        </header>
+      </Sheet>
     </AnimationWrapper>
   );
 };

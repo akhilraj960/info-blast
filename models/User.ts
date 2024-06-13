@@ -1,3 +1,4 @@
+import { IUser } from "@/types/models";
 import mongoose, { Document, Schema, Model } from "mongoose";
 
 let profile_imgs_name_list: string[] = [
@@ -29,16 +30,16 @@ let profile_imgs_collections_list: string[] = [
   "fun-emoji",
 ];
 
-
-
 const userSchema: Schema = new Schema(
   {
     personal_info: {
-      fullname: {
+      firstName: {
         type: String,
-        lowercase: true,
         required: true,
-        minlength: [3, "fullname must be 3 letters long"],
+      },
+      lastName: {
+        type: String,
+        required: true,
       },
       email: {
         type: String,
@@ -61,17 +62,17 @@ const userSchema: Schema = new Schema(
       },
       profile_img: {
         type: String,
-        default: () => {
-          return `https://api.dicebear.com/6.x/${
-            profile_imgs_collections_list[
-              Math.floor(Math.random() * profile_imgs_collections_list.length)
-            ]
-          }/svg?seed=${
-            profile_imgs_name_list[
-              Math.floor(Math.random() * profile_imgs_name_list.length)
-            ]
-          }`;
-        },
+        // default: () => {
+        //   return `https://api.dicebear.com/6.x/${
+        //     profile_imgs_collections_list[
+        //       Math.floor(Math.random() * profile_imgs_collections_list.length)
+        //     ]
+        //   }/svg?seed=${
+        //     profile_imgs_name_list[
+        //       Math.floor(Math.random() * profile_imgs_name_list.length)
+        //     ]
+        //   }`;
+        // },
       },
     },
     social_links: {
@@ -127,5 +128,6 @@ const userSchema: Schema = new Schema(
   }
 );
 
-const User: Model<IUser> = mongoose.model<IUser>("User", userSchema);
+const User: Model<IUser> =
+  mongoose.models.User || mongoose.model<IUser>("User", userSchema);
 export default User;

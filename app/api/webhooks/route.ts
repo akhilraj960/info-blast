@@ -58,7 +58,6 @@ export async function POST(req: Request) {
     const { email_addresses, first_name, last_name, image_url, username } =
       evt?.data;
 
-    console.log(id);
     try {
       createOrUpdateUser({
         first_name,

@@ -1,16 +1,18 @@
-import User from "@/models/User";
-import { connectDb } from "../mongoose";
+import User from "@/lib/models/User";
+import { connectDb } from "@/lib/mongoose";
 import { EmailAddressJSON } from "@clerk/backend";
 
 interface createUserProps {
-  first_name: any;
-  last_name: any;
+  clerkId: string | null;
+  first_name: string | null;
+  last_name: string | null;
   image_url: string;
   email_addresses: EmailAddressJSON[];
-  username: any;
+  username: string | null;
 }
 
-export const createOrUpdateUser = async ({
+export const createUser = async ({
+  clerkId,
   first_name,
   last_name,
   image_url,
@@ -20,24 +22,8 @@ export const createOrUpdateUser = async ({
   try {
     await connectDb();
 
-    // const user = await User.findByIdAndUpdate(
-    //   {
-    //     $set: {
-    //       personal_info: {
-    //         firstName: first_name,
-    //         lastName: last_name,
-    //         profile_img: image_url,
-    //         email: email_addresses[0].email_address,
-    //         username: username,
-    //       },
-    //     },
-    //   },
-    //   { upsert: true, new: true }
-    // );
-
-    // await user.save();
-
     const user = await new User({
+      clerkId,
       firstName: first_name,
       lastName: last_name,
       profile_img: image_url,

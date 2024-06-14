@@ -1,5 +1,5 @@
 export interface IUser extends Document {
-  _id: string;
+  clerkId:string
   personal_info: {
     firstName: string;
     lastName: string;

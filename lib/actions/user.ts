@@ -24,11 +24,13 @@ export const createUser = async ({
 
     const user = await new User({
       clerkId,
-      firstName: first_name,
-      lastName: last_name,
-      profile_img: image_url,
-      email: email_addresses[0].email_address,
-      username: username,
+      personal_info: {
+        firstName: first_name,
+        lastName: last_name,
+        profile_img: image_url,
+        email: email_addresses[0].email_address,
+        username: username,
+      },
     });
 
     await user.save();

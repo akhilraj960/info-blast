@@ -20,17 +20,13 @@ interface UploadResponse {
   };
 }
 
-interface Author {
-  personal_info: Record<string, any>;
-}
-
 interface Blog {
   title: string;
   banner: string;
   content: EditorJS.OutputData;
   tags: any[];
   description: string;
-  author: Author;
+  author: string;
 }
 
 const uploadImage = async (file: File): Promise<UploadResponse> => {
@@ -67,7 +63,7 @@ const WritePage: React.FC = () => {
     content: { blocks: [] },
     tags: [],
     description: "",
-    author: { personal_info: {} },
+    author: "",
   });
   const [textEditor, setTextEditor] = useState<EditorJS | null>(null);
   const [loading, setLoading] = useState(true);
@@ -142,10 +138,8 @@ const WritePage: React.FC = () => {
     initEditor();
 
     return () => {
-      if (textEditor) {
-        textEditor.isReady.then(() => {
-          textEditor.destroy();
-        });
+      if (textEditor?.isReady) {
+        textEditor.destroy();
       }
     };
   }, [content]);
@@ -171,6 +165,16 @@ const WritePage: React.FC = () => {
   };
 
   const handlePublish = async () => {
+    console.log(blog);
+
+    if (!banner) {
+      return toast.error("Upload an banner for your blog.");
+    }
+
+    if (!title) {
+      return toast.error("Write a title for your blog.");
+    }
+
     if (textEditor) {
       try {
         const data = await textEditor.save();

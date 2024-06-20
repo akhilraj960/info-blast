@@ -66,8 +66,6 @@ export async function POST(req: Request) {
       email_addresses,
       username,
     });
-
-    console.log("userId:", evt.data.id);
   }
 
   // console.log(`Webhook with and ID of ${id} and type of ${eventType}`)

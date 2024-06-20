@@ -5,7 +5,7 @@ import React from "react";
 import logo from "../public/logo.png";
 import logoSecondary from "../public/logosecondary.png";
 import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "./ui/button";
+import { buttonVariants } from "./ui/button";
 import { TfiWrite } from "react-icons/tfi";
 import { ThemeMode } from "./ThemeMode";
 import { AnimationWrapper } from "./AnimationWrapper";
@@ -13,11 +13,13 @@ import { useTheme } from "next-themes";
 import { SignOutButton, useAuth } from "@clerk/nextjs";
 import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "./ui/sheet";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
+import { useUser } from "@clerk/nextjs";
 
 export const Navbar = () => {
   const { theme } = useTheme();
 
   const { sessionId } = useAuth();
+  const { isLoaded, isSignedIn, user } = useUser();
 
   return (
     <AnimationWrapper
@@ -43,7 +45,19 @@ export const Navbar = () => {
               </SheetTrigger>
               <SheetContent className="bg-white dark:bg-black/90 dark:shadow-white/20 backdrop-blur-md border-none shadow-xl">
                 <ThemeMode />
-                <SheetHeader></SheetHeader>
+                <div className="w-full mt-4 flex flex-col items-center justify-center">
+                  <a href={user?.imageUrl} target="_blank">
+                    <img
+                      src={user?.imageUrl}
+                      alt="profile image"
+                      className="rounded-full w-20 border"
+                    />
+                  </a>
+                  <h4 className="capitalize mt-4">
+                    {user?.firstName} {user?.lastName}
+                  </h4>
+                  <p className="text-sm font-semibold">@{user?.username}</p>
+                </div>
               </SheetContent>
             </div>
 

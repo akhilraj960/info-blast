@@ -66,7 +66,6 @@ const WritePage: React.FC = () => {
     author: "",
   });
   const [textEditor, setTextEditor] = useState<EditorJS | null>(null);
-  const [loading, setLoading] = useState(true);
 
   const { sessionId } = useAuth();
   const router = useRouter();
@@ -165,7 +164,6 @@ const WritePage: React.FC = () => {
   };
 
   const handlePublish = async () => {
-    console.log(blog);
 
     if (!banner) {
       return toast.error("Upload an banner for your blog.");

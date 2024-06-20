@@ -5,7 +5,7 @@ import React from "react";
 const page = () => {
   return (
     <Wrapper className="flex justify-center items-center">
-      <h1>Progress...</h1>
+      <h1>Under Construction...</h1>
     </Wrapper>
   );
 };

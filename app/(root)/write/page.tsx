@@ -13,6 +13,7 @@ import defaultBanner from "@/public/blog-banner.png";
 import EditorJS from "@editorjs/editorjs";
 import { Textarea } from "@/components/ui/textarea";
 import { Cross2Icon } from "@radix-ui/react-icons";
+import axios from 'axios'
 
 interface UploadResponse {
   success: number;
@@ -25,9 +26,9 @@ interface Blog {
   title: string;
   banner: string;
   content: EditorJS.OutputData;
-  tags: any[];
+  tags: string[];
   description: string;
-  author: string;
+  draft: boolean
 }
 
 const uploadImage = async (file: File): Promise<UploadResponse> => {
@@ -64,7 +65,7 @@ const WritePage: React.FC = () => {
     content: { blocks: [] },
     tags: [],
     description: "",
-    author: "",
+    draft: false
   });
   const [textEditor, setTextEditor] = useState<EditorJS | null>(null);
   const [editorState, setEditorState] = useState("editor");
@@ -216,6 +217,14 @@ const WritePage: React.FC = () => {
     setBlog({ ...blog, tags: updatedTags });
   };
 
+  const handleSubmit = async (e: any) => {
+    console.log(blog)
+    const response = await axios.post('/api/blog/write', { blog })
+
+    console.log(response)
+
+  }
+
   return (
     <Wrapper className="max-w-[1000px]">
       <Toaster />
@@ -331,6 +340,7 @@ const WritePage: React.FC = () => {
                 })}
               </div>
             </div>
+            <Button onClick={handleSubmit} className="w-full mb-8">Publish</Button>
           </div>
         </AnimationWrapper>
       )}

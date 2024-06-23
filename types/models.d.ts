@@ -1,5 +1,7 @@
+import mongoose, { Schema } from "mongoose";
+
 export interface IUser extends Document {
-  clerkId:string
+  clerkId: string;
   personal_info: {
     firstName: string;
     lastName: string;
@@ -24,4 +26,23 @@ export interface IUser extends Document {
   google_auth: boolean;
   blogs: mongoose.Types.ObjectId[];
   joinedAt?: Date;
+}
+
+export interface IBlog extends Document {
+  blog_id: string;
+  title: string;
+  banner: string;
+  description: string;
+  content: any[];
+  tags: string[];
+  author: string;
+  activity: {
+    total_likes: number;
+    total_comments: number;
+    total_reads: number;
+    total_parent_comments: number;
+  };
+  comments: mongoose.Types.ObjectId[];
+  draft: boolean;
+  publishedAt: Date;
 }

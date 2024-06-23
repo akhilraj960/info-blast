@@ -32,11 +32,16 @@ let profile_imgs_collections_list: string[] = [
 
 const userSchema: Schema = new Schema(
   {
-    clerkId: {
+    _id: {
       type: String,
       required: true,
       unique: true,
     },
+    // clerkId: {
+    //   type: String,
+    //   required: true,
+    //   unique: true,
+    // },
     personal_info: {
       firstName: {
         type: String,
@@ -135,4 +140,5 @@ const userSchema: Schema = new Schema(
 
 const User: Model<IUser> =
   mongoose.models.User || mongoose.model<IUser>("User", userSchema);
+
 export default User;

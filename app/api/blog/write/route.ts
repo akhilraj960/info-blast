@@ -8,6 +8,8 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   const { userId } = auth();
 
+  console.log(userId)
+
   if (!userId) {
     return NextResponse.json(
       { message: "You are not authenticated" },

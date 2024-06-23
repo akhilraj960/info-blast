@@ -61,7 +61,7 @@ export async function POST(request: Request) {
     title,
     banner,
     description,
-    content: content.blocks[0].data,
+    content: content,
     author: userId,
     tags,
     draft,

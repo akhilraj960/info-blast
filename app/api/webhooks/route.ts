@@ -59,7 +59,7 @@ export async function POST(req: Request) {
       evt?.data;
 
     await createUser({
-      _id: id,
+      clerkId: id,
       first_name,
       last_name,
       image_url,

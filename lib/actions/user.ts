@@ -3,7 +3,7 @@ import { connectDb } from "@/lib/mongoose";
 import { EmailAddressJSON } from "@clerk/backend";
 
 interface createUserProps {
-  _id: string | null;
+  clerkId: string | null;
   first_name: string | null;
   last_name: string | null;
   image_url: string;
@@ -12,7 +12,7 @@ interface createUserProps {
 }
 
 export const createUser = async ({
-  _id,
+  clerkId,
   first_name,
   last_name,
   image_url,
@@ -23,7 +23,7 @@ export const createUser = async ({
     await connectDb();
 
     const user = await new User({
-      _id,
+      clerkId,
       personal_info: {
         firstName: first_name,
         lastName: last_name,
@@ -44,6 +44,6 @@ export const createUser = async ({
 export const deleteUser = async (id: string) => {
   try {
     await connectDb();
-    User.findByIdAndDelete({ _id: id });
+    User.findByIdAndDelete({ clerkId: id });
   } catch (error) {}
 };

@@ -77,9 +77,6 @@ export async function POST(request: Request) {
         $push: { blogs: blog._id },
       }
     )
-      .then((user) => {
-        console.log(user);
-      })
       .catch((error) => {
         return NextResponse.json(
           { message: "Failed to update total posts number" + error },
@@ -89,10 +86,5 @@ export async function POST(request: Request) {
       .catch((error) => {
         return NextResponse.json({ message: error.message }, { status: 500 });
       });
-  });
-
-  // Handle successful response
-  return NextResponse.json({
-    blog: { title, banner, content, tags, description },
   });
 }

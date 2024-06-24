@@ -33,9 +33,11 @@ export const createUser = async ({
       },
     });
 
-    await user.save();
+    await user.save().then((user) => {
+      console.log("user created", user);
 
-    return user;
+      return user;
+    });
   } catch (error) {
     console.log(error);
   }

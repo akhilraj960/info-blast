@@ -29,7 +29,8 @@ const blogSchema = new Schema<IBlog>(
       required: true,
     },
     author: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref:"User",
       required: true,
     },
     activity: {

@@ -18,10 +18,7 @@ export async function POST(request: Request) {
   try {
     const user = await clerkClient.users.getUser(userId);
 
-    
     const collectionId = user.publicMetadata.userId;
-    
-    console.log(collectionId)
     
     const body = await request.json();
     const { title, banner, content, tags, description, draft } = body.blog;

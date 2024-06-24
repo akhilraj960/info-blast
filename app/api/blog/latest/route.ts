@@ -1,25 +1,53 @@
+import { NextApiRequest, NextApiResponse } from "next";
 import Blog from "@/lib/models/Blog";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   const body = await request.json();
 
-  const { page } = body;
+  const { page, maxLimit } = body;
 
-  const maxLimit = 5;
+  const result = await Blog.aggregate([
+    {
+      $match: { draft: false },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "author",
+        foreignField: "_id",
+        as: "author",
+      },
+    },
+    {
+      $unwind: "$author",
+    },
+    {
+      $project: {
+        blog_id: 1,
+        title: 1,
+        description: 1,
+        banner: 1,
+        activity: 1,
+        tags: 1,
+        publishedAt: 1,
+        "author.personal_info.profile_img": 1,
+        "author.personal_info.username": 1,
+        "author.personal_info.firstName": 1,
+        "author.personal_info.lastName": 1,
+        _id: 0,
+      },
+    },
+    {
+      $sort: { publishedAt: -1 },
+    },
+    {
+      $skip: (page - 1) * maxLimit,
+    },
+    {
+      $limit: maxLimit,
+    },
+  ]);
 
-  Blog.find({ draft: false })
-    .populate(
-      "personal_info.profile_image personal_info.username personal_info.fullname -_id"
-    )
-    .sort({ publishedAt: -1 })
-    .select("blog_id title description banner activity tags publishedAt -_id")
-    .skip((page - 1) * maxLimit)
-    .limit(maxLimit)
-    .then((blogs) => {
-      return NextResponse.json({ blogs }, { status: 200 });
-    })
-    .catch((error) => {
-      return NextResponse.json({ message: error.message }, { status: 500 });
-    });
+  return NextResponse.json({ blogs: result }, { status: 200 });
 }

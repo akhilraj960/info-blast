@@ -35,7 +35,7 @@ export interface IBlog extends Document {
   description: string;
   content: any[];
   tags: string[];
-  author: any;
+  author: mongoose.Types.ObjectId;
   activity: {
     total_likes: number;
     total_comments: number;

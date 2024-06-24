@@ -1,12 +1,38 @@
+'use client'
 import { AnimationWrapper } from "@/components/AnimationWrapper";
+import { InPageNavigation } from "@/components/InPageNavigation";
+import { Loader } from "@/components/Loader";
 import { Wrapper } from "@/components/Wrapper";
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 const page = () => {
+
+  const [blogs, setBlogs] = useState(null)
+
+
+  const fetchLatestBlogs = ({ page = 1, maxLimit = 5 }: { page: number, maxLimit: number }) => {
+    axios.post('/api/blog/latest', { page, maxLimit }).then(async ({ data }) => {
+      console.log(data)
+    })
+  }
+
+  useEffect(() => {
+    fetchLatestBlogs({ page: 1, maxLimit: 5 })
+  }, [fetchLatestBlogs])
+
   return (
-    <Wrapper className="flex justify-center items-center">
-      <h1>Under Construction...</h1>
-    </Wrapper>
+    <AnimationWrapper>
+      <Wrapper>
+
+        <InPageNavigation routes={['Home', 'Trending blog']} className="mt-6">
+          <>
+            {blogs === null ? <Loader /> : null}
+          </>
+          <h1>Trending Blog</h1>
+        </InPageNavigation>
+      </Wrapper>
+    </AnimationWrapper>
   );
 };
 

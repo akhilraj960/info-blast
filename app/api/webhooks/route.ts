@@ -58,6 +58,8 @@ export async function POST(req: Request) {
     const { first_name, last_name, email_addresses, image_url, id, username } =
       evt?.data;
 
+    console.log(evt?.data);
+
     const newUser = await createUser({
       clerkId: id,
       first_name,
@@ -67,7 +69,9 @@ export async function POST(req: Request) {
       username,
     });
 
-    console.log("webhook user",newUser);
+    console.log("webhook");
+
+    console.log("webhook user", newUser);
 
     if (newUser) {
       await clerkClient.users.updateUserMetadata(id, {

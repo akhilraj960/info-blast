@@ -37,22 +37,7 @@ export const createUser = async ({
 
     console.log("new User Created ", newUser);
 
-    // const user = await new User({
-    //   clerkId,
-    //   personal_info: {
-    //     firstName: first_name,
-    //     lastName: last_name,
-    //     profile_img: image_url,
-    //     email: email_addresses[0].email_address,
-    //     username: username,
-    //   },
-    // });
-
-    // await user.save().then((user) => {
-    //   console.log("user created", user);
-
-    //   return user;
-    // });
+    return newUser;
   } catch (error) {
     console.log("Error : ", error);
   }

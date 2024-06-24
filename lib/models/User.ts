@@ -32,16 +32,11 @@ let profile_imgs_collections_list: string[] = [
 
 const userSchema: Schema = new Schema(
   {
-    _id: {
+    clerkId: {
       type: String,
       required: true,
       unique: true,
     },
-    // clerkId: {
-    //   type: String,
-    //   required: true,
-    //   unique: true,
-    // },
     personal_info: {
       firstName: {
         type: String,

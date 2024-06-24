@@ -11,15 +11,15 @@ const page = () => {
   const [blogs, setBlogs] = useState(null)
 
 
-  const fetchLatestBlogs = ({ page = 1, maxLimit = 5 }: { page: number, maxLimit: number }) => {
-    axios.post('/api/blog/latest', { page, maxLimit }).then(async ({ data }) => {
-      console.log(data)
-    })
-  }
+  // const fetchLatestBlogs = ({ page = 1, maxLimit = 5 }: { page: number, maxLimit: number }) => {
+  //   axios.post('/api/blog/latest', { page, maxLimit }).then(async ({ data }) => {
+  //     console.log(data)
+  //   })
+  // }
 
-  useEffect(() => {
-    fetchLatestBlogs({ page: 1, maxLimit: 5 })
-  }, [fetchLatestBlogs])
+  // useEffect(() => {
+  //   fetchLatestBlogs({ page: 1, maxLimit: 5 })
+  // }, [fetchLatestBlogs])
 
   return (
     <AnimationWrapper>

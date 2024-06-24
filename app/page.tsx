@@ -3,12 +3,12 @@ import { AnimationWrapper } from "@/components/AnimationWrapper";
 import { InPageNavigation } from "@/components/InPageNavigation";
 import { Loader } from "@/components/Loader";
 import { Wrapper } from "@/components/Wrapper";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+// import axios from "axios";
+// import React, { useEffect, useState } from "react";
 
 const page = () => {
 
-  const [blogs, setBlogs] = useState(null)
+  // const [blogs, setBlogs] = useState(null)
 
 
   // const fetchLatestBlogs = ({ page = 1, maxLimit = 5 }: { page: number, maxLimit: number }) => {
@@ -27,7 +27,7 @@ const page = () => {
 
         <InPageNavigation routes={['Home', 'Trending blog']} className="mt-6">
           <>
-            {blogs === null ? <Loader /> : null}
+            <h1>Home Page</h1>
           </>
           <h1>Trending Blog</h1>
         </InPageNavigation>

@@ -35,7 +35,7 @@ export interface IBlog extends Document {
   description: string;
   content: any[];
   tags: string[];
-  author: string;
+  author: any;
   activity: {
     total_likes: number;
     total_comments: number;

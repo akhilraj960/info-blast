@@ -1,11 +1,14 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Blog from "@/lib/models/Blog";
 import { NextResponse } from "next/server";
+import { connectDb } from "@/lib/mongoose";
 
 export async function POST(request: Request) {
   const body = await request.json();
 
   const { page, maxLimit } = body;
+
+  await connectDb();
 
   const result = await Blog.aggregate([
     {

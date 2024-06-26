@@ -25,7 +25,7 @@ export const InPageNavigation = ({
     return (
         <>
             <div
-                className={`relative mb-8 border-b border-t border-gray-800 flex flex-nowrap gap-2 overflow-x-auto  ${className}`}
+                className={`mb-8 border-b border-t border-gray-300 dark:border-gray-800 flex flex-nowrap gap-2 overflow-x-auto  ${className}`}
             >
                 {routes.map((route, i) => (
                     <Button

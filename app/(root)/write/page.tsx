@@ -58,7 +58,7 @@ const uploadImage = async (file: File): Promise<UploadResponse> => {
   }
 };
 
-const WritePage: React.FC = () => {
+export default function WritePage() {
   const [blog, setBlog] = useState<Blog>({
     title: "",
     banner: "",
@@ -348,4 +348,3 @@ const WritePage: React.FC = () => {
   );
 };
 
-export default WritePage;

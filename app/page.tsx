@@ -2,6 +2,7 @@
 import { AnimationWrapper } from "@/components/AnimationWrapper";
 import { BlogCard } from "@/components/BlogCard";
 import { InPageNavigation } from "@/components/InPageNavigation";
+import { LoadMoreData } from "@/components/LoadMoreData";
 import { Loader } from "@/components/Loader";
 import { Wrapper } from "@/components/Wrapper";
 import { Button } from "@/components/ui/button";
@@ -9,36 +10,48 @@ import { Blog } from "@/types/types";
 import { filterPaginationData } from "@/utils/filterPaginationData";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { MdAutoGraph } from "react-icons/md";
 
 interface Blogs {
   results: Blog[];
 }
 
-const page = () => {
+interface FetchParams {
+  page?: number;
+  maxLimit?: number;
+}
+
+export default function Home() {
   const [blogs, setBlogs] = useState<Blogs | null>(null);
   const [pageState, setPageState] = useState<string>("home");
 
-  const categories = ["programming", "tech", "finance", "cooking", "social", "travel"
-  ]
+  const categories: string[] = [
+    "programming",
+    "tech",
+    "finance",
+    "cooking",
+    "social",
+    "travel",
+  ];
 
-
-  const fetchLatestBlogs = ({ page = 1, maxLimit = 5 }) => {
-    axios
-      .post("/api/blog/latest", { page, maxLimit })
-      .then(async ({ data }) => {
-        let formateData = await filterPaginationData({
-          state: blogs,
-          data: data.blogs,
-          page,
-          count: "/api/blog/count",
-          data_to_send: { tag: pageState },
-        });
-        console.log(formateData);
-        setBlogs(formateData);
-      })
-      .catch((error: any) => {
-        console.log(error);
+  const fetchLatestBlogs = async ({ page = 1, maxLimit = 5 }: FetchParams) => {
+    try {
+      const { data } = await axios.post<{ blogs: Blog[] }>("/api/blog/latest", {
+        page,
+        maxLimit,
       });
+      const formattedData = await filterPaginationData({
+        state: blogs,
+        data: data.blogs,
+        page,
+        count: "/api/blog/count",
+        data_to_send: { tag: pageState },
+      });
+      console.log(formattedData);
+      setBlogs(formattedData);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -46,15 +59,15 @@ const page = () => {
   }, []);
 
   return (
-
     <AnimationWrapper>
-
       <Wrapper className="flex gap-4 max-w-[1200px]">
-        {/* blog section  */}
+        {/* Blog section */}
         <div className="flex w-[60%] max-md:w-full">
           <div className="w-full flex flex-col">
-
-            <InPageNavigation routes={["Home", "Trending blog"]} className="mt-6 sticky top-20 bg-white dark:bg-background">
+            <InPageNavigation
+              routes={["Home", "Trending blog"]}
+              className="mt-6 sticky top-20 bg-white dark:bg-background"
+            >
               <>
                 {blogs === null ? (
                   <Loader />
@@ -68,30 +81,46 @@ const page = () => {
                     </AnimationWrapper>
                   ))
                 ) : null}
+
+                <LoadMoreData
+                  state={blogs}
+                  fetchDataFn={
+                    pageState === "home" ? fetchLatestBlogs : undefined
+                  }
+                />
               </>
               <>
-
+                <h2>Trending</h2>
               </>
             </InPageNavigation>
           </div>
-
         </div>
-        {/* trending section  */}
+        {/* Trending section */}
         <div className="max-md:hidden w-[400px] border-l overflow-auto">
           <div className="fixed w-[400px] h-full p-4">
-
             <div className="w-[400px]">
-              <div className="">
+              <div className="mt-4">
+                <h4>Stories from all interests</h4>
 
-                <h4>Trending </h4>
-
-                {/* categories  */}
-                <div className="flex gap-6 flex-wrap mt-2">
+                {/* Categories */}
+                <div className="flex gap-6 flex-wrap mt-4">
                   {categories.map((cat, index) => (
-                    <Button className={`rounded-full text-sm capitalize ${pageState === cat ? "" : ""}`} variant={'outline'}>
+                    <Button
+                      key={index}
+                      className="rounded-full text-sm capitalize"
+                      variant="outline"
+                    >
                       {cat}
                     </Button>
                   ))}
+                </div>
+
+                <div className="mt-4 flex items-center gap-4">
+                  <h4>Trending</h4>
+                  <MdAutoGraph
+                    size={24}
+                    className="text-primary/40 text-center"
+                  />
                 </div>
               </div>
             </div>
@@ -99,10 +128,5 @@ const page = () => {
         </div>
       </Wrapper>
     </AnimationWrapper>
-
   );
-};
-
-export default page;
-
-// re_7kLTS4Yh_PQbhcYkW2XZn8Dfh96j5vg2U
+}

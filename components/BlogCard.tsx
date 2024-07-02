@@ -8,6 +8,7 @@ import { CiHeart, CiChat1 } from "react-icons/ci";
 
 export const BlogCard = ({ content }: { content: any }) => {
   const {
+    _id,
     blog_id,
     author: {
       personal_info: { firstName, lastName, username, profile_img },
@@ -34,7 +35,10 @@ export const BlogCard = ({ content }: { content: any }) => {
           <p className="text-sm text-primary/80">@{username}</p>
         </Link>
 
-        <Link href={`/blog/${encodeURIComponent(blog_id)}`} className="flex flex-col gap-4">
+        <Link
+          href={`/blog/${encodeURIComponent(_id)}`}
+          className="flex flex-col gap-4"
+        >
           {/* blog content  */}
           <div className="flex items-center justify-between gap-4">
             <div className="flex flex-col gap-1">

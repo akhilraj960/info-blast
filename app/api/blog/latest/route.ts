@@ -4,53 +4,56 @@ import { NextResponse } from "next/server";
 import { connectDb } from "@/lib/mongoose";
 
 export async function POST(request: Request) {
-  const body = await request.json();
+  try {
+    await connectDb();
 
-  const { page, maxLimit } = body;
+    const { page, maxLimit } = await request.json();
 
-  await connectDb();
-
-  const result = await Blog.aggregate([
-    {
-      $match: { draft: false },
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "author",
-        foreignField: "_id",
-        as: "author",
+    const result = await Blog.aggregate([
+      {
+        $match: { draft: false },
       },
-    },
-    {
-      $unwind: "$author",
-    },
-    {
-      $project: {
-        blog_id: 1,
-        title: 1,
-        description: 1,
-        banner: 1,
-        activity: 1,
-        tags: 1,
-        publishedAt: 1,
-        "author.personal_info.profile_img": 1,
-        "author.personal_info.username": 1,
-        "author.personal_info.firstName": 1,
-        "author.personal_info.lastName": 1,
-        _id: 0,
+      {
+        $lookup: {
+          from: "users",
+          localField: "author",
+          foreignField: "_id",
+          as: "author",
+        },
       },
-    },
-    {
-      $sort: { publishedAt: -1 },
-    },
-    {
-      $skip: (page - 1) * maxLimit,
-    },
-    {
-      $limit: maxLimit,
-    },
-  ]);
+      {
+        $unwind: "$author",
+      },
+      {
+        $project: {
+          blog_id: 1,
+          title: 1,
+          description: 1,
+          banner: 1,
+          activity: 1,
+          tags: 1,
+          publishedAt: 1,
+          "author.personal_info.profile_img": 1,
+          "author.personal_info.username": 1,
+          "author.personal_info.firstName": 1,
+          "author.personal_info.lastName": 1,
+          _id: 1,
+        },
+      },
+      {
+        $sort: { publishedAt: -1 },
+      },
+      {
+        $skip: (page - 1) * maxLimit,
+      },
+      {
+        $limit: maxLimit,
+      },
+    ]);
 
-  return NextResponse.json({ blogs: result }, { status: 200 });
+    return NextResponse.json({ blogs: result }, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching blogs:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
 }

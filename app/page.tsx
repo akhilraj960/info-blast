@@ -4,6 +4,7 @@ import { BlogCard } from "@/components/BlogCard";
 import { InPageNavigation } from "@/components/InPageNavigation";
 import { LoadMoreData } from "@/components/LoadMoreData";
 import { Loader } from "@/components/Loader";
+import { MinimalBlogPost } from "@/components/MinimalBlogPost";
 import { Wrapper } from "@/components/Wrapper";
 import { Button } from "@/components/ui/button";
 import { Blog } from "@/types/types";
@@ -24,6 +25,7 @@ interface FetchParams {
 export default function Home() {
   const [blogs, setBlogs] = useState<Blogs | null>(null);
   const [pageState, setPageState] = useState<string>("home");
+  const [trendingBlogs, setTrendingBlogs] = useState<any>(null);
 
   const categories: string[] = [
     "programming",
@@ -54,8 +56,16 @@ export default function Home() {
     }
   };
 
+  const fetchTrendingBlogs = async () => {
+    axios.get("/api/blog/trending").then(({ data }) => {
+      console.log(data.blog);
+      setTrendingBlogs(data.blog);
+    });
+  };
+
   useEffect(() => {
     fetchLatestBlogs({ page: 1 });
+    fetchTrendingBlogs();
   }, []);
 
   return (
@@ -98,7 +108,7 @@ export default function Home() {
         {/* Trending section */}
         <div className="max-md:hidden w-[400px] border-l overflow-auto">
           <div className="fixed w-[400px] h-full p-4">
-            <div className="w-[400px]">
+            <div className="w-[400px] h-full overflow-y-scroll no-scrollbar mb-10">
               <div className="mt-4">
                 <h4>Stories from all interests</h4>
 
@@ -121,6 +131,22 @@ export default function Home() {
                     size={24}
                     className="text-primary/40 text-center"
                   />
+                </div>
+
+                <div className="mt-8 pb-10">
+                  {trendingBlogs === null ? (
+                    <Loader />
+                  ) : (
+                    <>
+                      {trendingBlogs.map((blog: any, index: number) => (
+                        <MinimalBlogPost
+                          key={index}
+                          index={index}
+                          content={blog}
+                        />
+                      ))}
+                    </>
+                  )}
                 </div>
               </div>
             </div>

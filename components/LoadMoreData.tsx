@@ -13,7 +13,7 @@ export const LoadMoreData = ({ state, fetchDataFn }: Props) => {
   }
 
   return (
-    <Divider>
+    <Divider className="my-4">
       <Button
         onClick={() => fetchDataFn({ page: state.page + 1 })}
         className="bg-trasnparent text-primary"

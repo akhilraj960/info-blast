@@ -12,7 +12,7 @@ export const BlogCard = ({ content }: { content: any }) => {
     blog_id,
     author: {
       personal_info: { firstName, lastName, username, profile_img },
-    },
+    },  
     title,
     banner,
     description,

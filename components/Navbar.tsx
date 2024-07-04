@@ -5,21 +5,30 @@ import React from "react";
 import logo from "../public/logo.png";
 import logoSecondary from "../public/logosecondary.png";
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { TfiWrite } from "react-icons/tfi";
 import { ThemeMode } from "./ThemeMode";
 import { AnimationWrapper } from "./AnimationWrapper";
 import { useTheme } from "next-themes";
-import { SignOutButton, useAuth } from "@clerk/nextjs";
-import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "./ui/sheet";
+import { SignIn, SignInButton, SignOutButton, useAuth } from "@clerk/nextjs";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTrigger,
+} from "./ui/sheet";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import { useUser } from "@clerk/nextjs";
+import { CiLogout } from "react-icons/ci";
 
 export const Navbar = () => {
   const { theme } = useTheme();
 
   const { sessionId } = useAuth();
   const { isLoaded, isSignedIn, user } = useUser();
+
+  console.log(isSignedIn);
 
   return (
     <AnimationWrapper
@@ -43,21 +52,78 @@ export const Navbar = () => {
               <SheetTrigger>
                 <HamburgerMenuIcon width={25} height={25} />
               </SheetTrigger>
-              <SheetContent className="bg-white dark:bg-black/90 dark:shadow-white/20 backdrop-blur-md border-none shadow-xl">
-                <ThemeMode />
-                <div className="w-full mt-4 flex flex-col items-center justify-center">
-                  <a href={user?.imageUrl} target="_blank">
-                    <img
-                      src={user?.imageUrl}
-                      alt="profile image"
-                      className="rounded-full w-20 border"
-                    />
-                  </a>
-                  <h4 className="capitalize mt-4">
-                    {user?.firstName} {user?.lastName}
-                  </h4>
-                  <p className="text-sm font-semibold">@{user?.username}</p>
+              <SheetContent className="p-0 dark:shadow-white/20 backdrop-blur-md border-none shadow-xl">
+                <div className="mt-4 ml-4">
+                  <ThemeMode />
                 </div>
+                {isSignedIn ? (
+                  <>
+                    <div className="w-full mt-4 flex flex-col items-center justify-center">
+                      <a href={user?.imageUrl} target="_blank">
+                        <Image
+                          width={200}
+                          height={200}
+                          src={user?.imageUrl}
+                          alt="profile image"
+                          className="rounded-full w-20 border"
+                        />
+                      </a>
+                      <h4 className="capitalize mt-4">
+                        {user?.firstName} {user?.lastName}
+                      </h4>
+                      <p className="text-sm font-semibold">@{user?.username}</p>
+                    </div>
+                    <div className="mt-5 flex flex-col gap-2">
+                      <SheetClose asChild>
+                        <Button className="w-full" variant={"outline"}>
+                          Profile
+                        </Button>
+                      </SheetClose>
+                      <SheetClose>
+                        <Button className="w-full " variant={"outline"}>
+                          Write
+                        </Button>
+                      </SheetClose>
+                      <SheetClose>
+                        <Button className="w-full" variant={"outline"}>
+                          Blogs
+                        </Button>
+                      </SheetClose>
+                      <SheetClose>
+                        <Button className="w-full" variant={"outline"}>
+                          Draft
+                        </Button>
+                      </SheetClose>
+                      <SheetClose
+                        className={cn(
+                          buttonVariants({
+                            variant: "outline",
+                            className: "flex gap-5",
+                          })
+                        )}
+                      >
+                        <CiLogout size={22} className="text-red-600" />
+
+                        {/* <Image
+                          src={user?.imageUrl}
+                          width={20}
+                          height={20}
+                          alt="profile image"
+                          className="rounded-full"
+                        /> */}
+                        <div className="text-red-600">
+                          <SignOutButton />
+                        </div>
+                      </SheetClose>
+                    </div>
+                  </>
+                ) : (
+                  <SheetClose asChild className="mt-10">
+                    <Button variant={"outline"} className="w-full">
+                      <SignInButton />
+                    </Button>
+                  </SheetClose>
+                )}
               </SheetContent>
             </div>
 

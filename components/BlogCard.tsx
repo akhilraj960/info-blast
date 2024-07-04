@@ -12,7 +12,7 @@ export const BlogCard = ({ content }: { content: any }) => {
     blog_id,
     author: {
       personal_info: { firstName, lastName, username, profile_img },
-    },  
+    },
     title,
     banner,
     description,
@@ -55,7 +55,7 @@ export const BlogCard = ({ content }: { content: any }) => {
                 alt="banner"
                 width={125}
                 height={125}
-                className="min-w-40 aspect-video max-sm:min-w-28"
+                className="min-w-40 aspect-video max-sm:min-w-28 object-cover"
               />
             </div>
           </div>

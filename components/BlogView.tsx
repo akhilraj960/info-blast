@@ -27,7 +27,7 @@ export const BlogView = ({ blogData }: { blogData: Blog }) => {
         height={800}
         width={800}
         alt="banner"
-        className="mt-4 w-full aspect-video"
+        className="mt-4 w-full aspect-video object-cover"
       />
       <h2 className="max-sm:text-xl max-md:text-2xl mt-2">{title}</h2>
       <p className="text-[12px] text-primary/60 mt-4">

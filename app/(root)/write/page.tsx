@@ -274,8 +274,10 @@ export default function WritePage() {
       ) : (
         <AnimationWrapper>
           <div>
-            <img
+            <Image
               src={banner}
+              width={600}
+              height={600}
               alt="banner image"
               className="w-full aspect-video rounded-lg overflow-hidden mt-4"
             />

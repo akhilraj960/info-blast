@@ -33,7 +33,7 @@ export default function BlogDetails({
   return (
     <>
       <AnimationWrapper>
-        <Wrapper className="max-w-[1000px]">
+        <Wrapper className="max-w-[800px] mb-20">
           {blog === null ? (
             <Loader />
           ) : (

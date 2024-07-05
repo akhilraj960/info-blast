@@ -18,6 +18,10 @@ export async function GET() {
         $project: {
           blog_id: 1,
           title: 1,
+          description: 1,
+          banner: 1,
+          activity: 1,
+          tags: 1,
           publishedAt: 1,
           "author.personal_info.profile_img": 1,
           "author.personal_info.username": 1,

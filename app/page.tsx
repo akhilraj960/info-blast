@@ -100,7 +100,15 @@ export default function Home() {
                 />
               </>
               <>
-                <h2>Trending</h2>
+                <div>
+                  {trendingBlogs === null ? (
+                    <Loader />
+                  ) : (
+                    trendingBlogs.map((blog:any, index:number) => {
+                      return <BlogCard key={index} content={blog}/>;
+                    })
+                  )}
+                </div>
               </>
             </InPageNavigation>
           </div>

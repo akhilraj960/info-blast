@@ -13,7 +13,7 @@ import defaultBanner from "@/public/blog-banner.png";
 import EditorJS from "@editorjs/editorjs";
 import { Textarea } from "@/components/ui/textarea";
 import { Cross2Icon } from "@radix-ui/react-icons";
-import axios from 'axios'
+import axios from "axios";
 
 interface UploadResponse {
   success: number;
@@ -28,7 +28,7 @@ interface Blog {
   content: EditorJS.OutputData;
   tags: string[];
   description: string;
-  draft: boolean
+  draft: boolean;
 }
 
 const uploadImage = async (file: File): Promise<UploadResponse> => {
@@ -65,7 +65,7 @@ export default function WritePage() {
     content: { blocks: [] },
     tags: [],
     description: "",
-    draft: false
+    draft: false,
   });
   const [textEditor, setTextEditor] = useState<EditorJS | null>(null);
   const [editorState, setEditorState] = useState("editor");
@@ -218,12 +218,11 @@ export default function WritePage() {
   };
 
   const handleSubmit = async (e: any) => {
-    console.log(blog)
-    const response = await axios.post('/api/blog/write', { blog })
+    console.log(blog);
+    const response = await axios.post("/api/blog/write", { blog });
 
-    console.log(response)
-
-  }
+    console.log(response);
+  };
 
   return (
     <Wrapper className="max-w-[1000px]">
@@ -231,8 +230,9 @@ export default function WritePage() {
       {editorState === "editor" ? (
         <AnimationWrapper className="mt-4 min-h-96">
           <div
-            className={`relative aspect-video bg-white border-2 ${banner && "border-none rounded-md"
-              }`}
+            className={`relative aspect-video bg-white border-2 ${
+              banner && "border-none rounded-md"
+            }`}
           >
             <label htmlFor="uploadBanner" className="absolute inset-0">
               <Image
@@ -325,7 +325,6 @@ export default function WritePage() {
                 onKeyDown={handleKeyDown}
               />
               <div className="flex flex-wrap w-full">
-
                 {tags.map((value, index) => {
                   return (
                     <div
@@ -334,7 +333,7 @@ export default function WritePage() {
                     >
                       <p className="outline-none">#{value}</p>
 
-                      <button onClick={() => handleTagDelete(value)} >
+                      <button onClick={() => handleTagDelete(value)}>
                         <Cross2Icon />
                       </button>
                     </div>
@@ -342,11 +341,12 @@ export default function WritePage() {
                 })}
               </div>
             </div>
-            <Button onClick={handleSubmit} className="w-full mb-8">Publish</Button>
+            <Button onClick={handleSubmit} className="w-full mb-8">
+              Publish
+            </Button>
           </div>
         </AnimationWrapper>
       )}
     </Wrapper>
   );
-};
-
+}

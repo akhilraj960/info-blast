@@ -1,4 +1,8 @@
 "use client";
+import dynamic from 'next/dynamic';
+import { useEffect, useState, useCallback } from 'react';
+import axios from 'axios';
+import { MdAutoGraph } from "react-icons/md";
 import { AnimationWrapper } from "@/components/AnimationWrapper";
 import { BlogCard } from "@/components/BlogCard";
 import { InPageNavigation } from "@/components/InPageNavigation";
@@ -9,9 +13,8 @@ import { Wrapper } from "@/components/Wrapper";
 import { Button } from "@/components/ui/button";
 import { Blog } from "@/types/types";
 import { filterPaginationData } from "@/utils/filterPaginationData";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { MdAutoGraph } from "react-icons/md";
+
+const categories = ["programming", "tech", "finance", "cooking", "social", "travel"];
 
 interface Blogs {
   results: Blog[];
@@ -27,21 +30,9 @@ export default function Home() {
   const [pageState, setPageState] = useState<string>("home");
   const [trendingBlogs, setTrendingBlogs] = useState<any>(null);
 
-  const categories: string[] = [
-    "programming",
-    "tech",
-    "finance",
-    "cooking",
-    "social",
-    "travel",
-  ];
-
-  const fetchLatestBlogs = async ({ page = 1, maxLimit = 5 }: FetchParams) => {
+  const fetchLatestBlogs = useCallback(async ({ page = 1, maxLimit = 5 }: FetchParams) => {
     try {
-      const { data } = await axios.post<{ blogs: Blog[] }>("/api/blog/latest", {
-        page,
-        maxLimit,
-      });
+      const { data } = await axios.post<{ blogs: Blog[] }>("/api/blog/latest", { page, maxLimit });
       const formattedData = await filterPaginationData({
         state: blogs,
         data: data.blogs,
@@ -49,19 +40,20 @@ export default function Home() {
         count: "/api/blog/count",
         data_to_send: { tag: pageState },
       });
-      console.log(formattedData);
       setBlogs(formattedData);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching latest blogs:", error);
     }
-  };
+  }, [blogs, pageState]);
 
-  const fetchTrendingBlogs = async () => {
-    axios.get("/api/blog/trending").then(({ data }) => {
-      console.log(data.blog);
+  const fetchTrendingBlogs = useCallback(async () => {
+    try {
+      const { data } = await axios.get("/api/blog/trending");
       setTrendingBlogs(data.blog);
-    });
-  };
+    } catch (error) {
+      console.error("Error fetching trending blogs:", error);
+    }
+  }, []);
 
   useEffect(() => {
     fetchLatestBlogs({ page: 1 });
@@ -79,34 +71,28 @@ export default function Home() {
               className="mt-6 sticky top-20 bg-white dark:bg-background"
             >
               <>
-                {blogs === null ? (
+                {!blogs ? (
                   <Loader />
                 ) : blogs.results.length ? (
                   blogs.results.map((blog, i) => (
-                    <AnimationWrapper
-                      key={i}
-                      transition={{ duration: 1, delay: i * 0.1 }}
-                    >
+                    <AnimationWrapper key={i} transition={{ duration: 1, delay: i * 0.1 }}>
                       <BlogCard content={blog} />
                     </AnimationWrapper>
                   ))
                 ) : null}
-
                 <LoadMoreData
                   state={blogs}
-                  fetchDataFn={
-                    pageState === "home" ? fetchLatestBlogs : undefined
-                  }
+                  fetchDataFn={pageState === "home" ? fetchLatestBlogs : undefined}
                 />
               </>
               <>
                 <div>
-                  {trendingBlogs === null ? (
+                  {!trendingBlogs ? (
                     <Loader />
                   ) : (
-                    trendingBlogs.map((blog:any, index:number) => {
-                      return <BlogCard key={index} content={blog}/>;
-                    })
+                    trendingBlogs.map((blog: any, index: number) => (
+                      <BlogCard key={index} content={blog} />
+                    ))
                   )}
                 </div>
               </>
@@ -119,41 +105,24 @@ export default function Home() {
             <div className="w-[400px] h-full overflow-y-scroll no-scrollbar mb-10">
               <div className="mt-4">
                 <h4>Stories from all interests</h4>
-
-                {/* Categories */}
                 <div className="flex gap-6 flex-wrap mt-4">
                   {categories.map((cat, index) => (
-                    <Button
-                      key={index}
-                      className="rounded-full text-sm capitalize"
-                      variant="outline"
-                    >
+                    <Button key={index} className="rounded-full text-sm capitalize" variant="outline">
                       {cat}
                     </Button>
                   ))}
                 </div>
-
                 <div className="mt-4 flex items-center gap-4">
                   <h4>Trending</h4>
-                  <MdAutoGraph
-                    size={24}
-                    className="text-primary/40 text-center"
-                  />
+                  <MdAutoGraph size={24} className="text-primary/40 text-center" />
                 </div>
-
                 <div className="mt-8 pb-10">
-                  {trendingBlogs === null ? (
+                  {!trendingBlogs ? (
                     <Loader />
                   ) : (
-                    <>
-                      {trendingBlogs.map((blog: any, index: number) => (
-                        <MinimalBlogPost
-                          key={index}
-                          index={index}
-                          content={blog}
-                        />
-                      ))}
-                    </>
+                    trendingBlogs.map((blog: any, index: number) => (
+                      <MinimalBlogPost key={index} index={index} content={blog} />
+                    ))
                   )}
                 </div>
               </div>

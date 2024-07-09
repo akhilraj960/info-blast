@@ -53,8 +53,9 @@ export const BlogCard = ({ content }: { content: any }) => {
               <Image
                 src={banner}
                 alt="banner"
-                width={125}
-                height={125}
+                width={75}
+                height={75}
+                loading="lazy"
                 className="min-w-40 aspect-video max-sm:min-w-28 object-cover"
               />
             </div>

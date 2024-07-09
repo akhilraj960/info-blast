@@ -2,6 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import logo from "../public/logo.png";
 import logoSecondary from "../public/logosecondary.png";
 import { cn } from "@/lib/utils";
@@ -10,32 +11,27 @@ import { TfiWrite } from "react-icons/tfi";
 import { ThemeMode } from "./ThemeMode";
 import { AnimationWrapper } from "./AnimationWrapper";
 import { useTheme } from "next-themes";
-import { SignInButton, SignOutButton, useAuth, useUser } from "@clerk/nextjs";
 import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetHeader,
-  SheetTrigger,
-} from "./ui/sheet";
-import { HamburgerMenuIcon } from "@radix-ui/react-icons";
+  SignedIn,
+  SignedOut,
+  SignOutButton,
+  UserButton,
+  useUser,
+} from "@clerk/nextjs";
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from "./ui/sheet";
 import { CiLogout } from "react-icons/ci";
-import { useRouter } from "next/navigation";
 
 export const Navbar = () => {
   const { theme } = useTheme();
-  const { sessionId } = useAuth();
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
 
-  // State to track when the component has mounted
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // If not mounted, return null to prevent hydration errors
   if (!mounted) {
     return null;
   }
@@ -48,25 +44,33 @@ export const Navbar = () => {
       <Sheet>
         <header className="h-20 backdrop-blur-xl drop-shadow-sm shadow-md sticky flex items-center justify-center">
           <div className="container flex justify-between items-center">
-            <Link href="/" aria-label="Home">
+            <Link href="/" className="flex items-center gap-1">
               <Image
                 src={logo}
                 alt="logo"
-                className="w-12 h-12 dark:hidden"
+                className="w-8 h-8 dark:hidden"
                 priority
               />
               <Image
                 src={logoSecondary}
                 alt="logo"
-                className="w-12 h-12 hidden dark:flex"
+                className="w-8 h-8 hidden dark:flex"
                 priority
               />
+              <h2 className="text-2xl font-sans max-md:hidden">InfoBlast</h2>
             </Link>
 
-            {/* SIDE MENU  */}
             <div className="hidden max-md:flex">
               <SheetTrigger>
-                <HamburgerMenuIcon width={25} height={25} aria-label="Menu" />
+                {isLoaded && user && (
+                  <Image
+                    width={100}
+                    height={100}
+                    src={user.imageUrl}
+                    alt="profile image"
+                    className="rounded-full w-10 border h-10 object-cover"
+                  />
+                )}
               </SheetTrigger>
               <SheetContent className="p-0 dark:shadow-white/20 backdrop-blur-md border-none shadow-xl">
                 <div className="mt-4 ml-4">
@@ -76,22 +80,22 @@ export const Navbar = () => {
                   <>
                     <div className="w-full mt-4 flex flex-col items-center justify-center">
                       <a
-                        href={user?.imageUrl}
+                        href={user.imageUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
                         <Image
                           width={200}
                           height={200}
-                          src={user?.imageUrl}
+                          src={user.imageUrl}
                           alt="profile image"
-                          className="rounded-full w-20 border"
+                          className="rounded-full w-20 border h-20 object-cover"
                         />
                       </a>
                       <h4 className="capitalize mt-4">
-                        {user?.firstName} {user?.lastName}
+                        {user.firstName} {user.lastName}
                       </h4>
-                      <p className="text-sm font-semibold">@{user?.username}</p>
+                      <p className="text-sm font-semibold">@{user.username}</p>
                     </div>
                     <div className="mt-5 flex flex-col gap-2">
                       <SheetClose asChild>
@@ -109,14 +113,35 @@ export const Navbar = () => {
                         </Button>
                       </SheetClose>
                       <SheetClose asChild>
-                        <Button className="w-full" variant="outline">
+                        <Link
+                          href={`/${"fdafa"}/blogs`}
+                          className={cn(
+                            buttonVariants({
+                              className: "w-full",
+                              variant: "outline",
+                            })
+                          )}
+                        >
                           Blogs
-                        </Button>
+                        </Link>
                       </SheetClose>
                       <SheetClose asChild>
                         <Button className="w-full" variant="outline">
                           Draft
                         </Button>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Link
+                          href={"/profile"}
+                          className={cn(
+                            buttonVariants({
+                              variant: "outline",
+                              className: "w-full",
+                            })
+                          )}
+                        >
+                          Manage Account
+                        </Link>
                       </SheetClose>
                       <SheetClose asChild>
                         <div
@@ -137,7 +162,8 @@ export const Navbar = () => {
                   </>
                 ) : (
                   <SheetClose asChild>
-                    <Link href={'/sign-in'}
+                    <Link
+                      href="/sign-in"
                       className={cn(
                         buttonVariants({
                           variant: "outline",
@@ -159,27 +185,36 @@ export const Navbar = () => {
                 className={cn(
                   buttonVariants({
                     variant: "secondary",
-                    className: "rounded-full flex gap-1",
+                    className: "rounded-full flex gap-1 min-w-30",
                   })
                 )}
               >
                 <TfiWrite />
                 create
               </Link>
-              {!sessionId ? (
+              <SignedOut>
                 <Link
                   href="/sign-in"
-                  className={cn(buttonVariants({ className: "rounded-full" }))}
+                  className={cn(
+                    buttonVariants({ className: "rounded-full min-w-30" })
+                  )}
                 >
                   Sign In
                 </Link>
-              ) : (
-                <div
-                  className={cn(buttonVariants({ className: "rounded-full" }))}
-                >
-                  <SignOutButton />
-                </div>
-              )}
+              </SignedOut>
+              <SignedIn>
+                {user && (
+                  <SheetTrigger>
+                    <Image
+                      src={user.imageUrl}
+                      width={200}
+                      height={200}
+                      alt="profile"
+                      className="rounded-full w-12 h-12 object-cover border"
+                    />
+                  </SheetTrigger>
+                )}
+              </SignedIn>
             </nav>
           </div>
         </header>

@@ -14,6 +14,15 @@ export async function POST(request: Request) {
         $match: { draft: false },
       },
       {
+        $sort: { publishedAt: -1 },
+      },
+      {
+        $skip: (page - 1) * maxLimit,
+      },
+      {
+        $limit: maxLimit,
+      },
+      {
         $lookup: {
           from: "users",
           localField: "author",
@@ -39,15 +48,6 @@ export async function POST(request: Request) {
           "author.personal_info.lastName": 1,
           _id: 1,
         },
-      },
-      {
-        $sort: { publishedAt: -1 },
-      },
-      {
-        $skip: (page - 1) * maxLimit,
-      },
-      {
-        $limit: maxLimit,
       },
     ]);
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
-import { useAuth } from "@clerk/nextjs";
+import { SignedIn, useAuth } from "@clerk/nextjs";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
@@ -225,128 +225,130 @@ export default function WritePage() {
   };
 
   return (
-    <Wrapper className="max-w-[1000px]">
-      <Toaster />
-      {editorState === "editor" ? (
-        <AnimationWrapper className="mt-4 min-h-96">
-          <div
-            className={`relative aspect-video bg-white border-2 ${
-              banner && "border-none rounded-md"
-            }`}
-          >
-            <label htmlFor="uploadBanner" className="absolute inset-0">
-              <Image
-                src={mainBanner}
-                alt="banner"
-                fill
-                priority
-                className={`${banner ? "rounded-md" : ""} z-20 object-cover`}
-              />
-              <Input
-                type="file"
-                id="uploadBanner"
-                accept=".png,.jpeg,.jpg"
-                hidden
-                onChange={handleBannerUpload}
-              />
-            </label>
-          </div>
-          <textarea
-            value={title}
-            placeholder="Blog Title"
-            onChange={(e) => setBlog({ ...blog, title: e.target.value })}
-            className="mt-10 text-4xl resize-none font-medium h-20 bg-transparent outline-none leading-tight placeholder-opacity-40 w-full overflow-y-hidden"
-          />
-          <hr className="my-10" />
-          <div
-            ref={editorRef}
-            id="editorjs"
-            className="dark:text-black bg-white rounded-md p-2"
-          />
-          <Button
-            onClick={handlePublish}
-            className="rounded-full w-full mt-8 capitalize"
-          >
-            Publish
-          </Button>
-          <div className="my-10"></div>
-        </AnimationWrapper>
-      ) : (
-        <AnimationWrapper>
-          <div>
-            <Image
-              src={banner}
-              width={600}
-              height={600}
-              alt="banner image"
-              className="w-full aspect-video rounded-lg overflow-hidden mt-4"
-            />
-          </div>
-          <h1 className="text-4xl font-medium mt-2 leading-tight line-clamp-2">
-            {title}
-          </h1>
-
-          <p className="line-clamp-2 text-xl leading-7 mt-4">{description}</p>
-
-          <div className="mt-6">
-            <p className="text-gray-700 mb-2">Blog Title</p>
-            <Input
-              type="text"
-              value={title}
-              onChange={(e) => setBlog({ ...blog, title: e.target.value })}
-              placeholder="Blog Title"
-              className="w-full bg-transparent p-2 rounded outline-none"
-            />
-            <p className="text-gray-700 mb-2 mt-9">
-              Short description about your blog.
-            </p>
-            <Textarea
-              placeholder="write a short description"
-              value={description}
-              maxLength={characterLimit}
-              onChange={(e) => {
-                setBlog({ ...blog, description: e.target.value });
-              }}
-              className="h-48 sm:h-40"
-            />
-            <p className="text-sm text-right text-gray-700">
-              {characterLimit - description.length} Characters left
-            </p>
-
-            <p className="text-gray-700 mt-9 mb-2 text-sm">
-              Tags - (Helps searching and ranking your blog post.)
-            </p>
-
-            <div className="relative p-2 pb-4 bg-transparent">
-              <Input
-                type="text"
-                placeholder="Tags"
-                className="sticky top-0 left-0 pl-4 py-2 w-full mb-3 "
-                onKeyDown={handleKeyDown}
-              />
-              <div className="flex flex-wrap w-full">
-                {tags.map((value, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className="relative w-full flex p-2 mt-2 mr-2 pr-8 rounded-full gap-1 items-center px-5 "
-                    >
-                      <p className="outline-none">#{value}</p>
-
-                      <button onClick={() => handleTagDelete(value)}>
-                        <Cross2Icon />
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
+    <SignedIn>
+      <Wrapper className="max-w-[1000px]">
+        <Toaster />
+        {editorState === "editor" ? (
+          <AnimationWrapper className="mt-4 min-h-96">
+            <div
+              className={`relative aspect-video bg-white border-2 ${
+                banner && "border-none rounded-md"
+              }`}
+            >
+              <label htmlFor="uploadBanner" className="absolute inset-0">
+                <Image
+                  src={mainBanner}
+                  alt="banner"
+                  fill
+                  priority
+                  className={`${banner ? "rounded-md" : ""} z-20 object-cover`}
+                />
+                <Input
+                  type="file"
+                  id="uploadBanner"
+                  accept=".png,.jpeg,.jpg"
+                  hidden
+                  onChange={handleBannerUpload}
+                />
+              </label>
             </div>
-            <Button onClick={handleSubmit} className="w-full mb-8">
+            <textarea
+              value={title}
+              placeholder="Blog Title"
+              onChange={(e) => setBlog({ ...blog, title: e.target.value })}
+              className="mt-10 text-4xl resize-none font-medium h-20 bg-transparent outline-none leading-tight placeholder-opacity-40 w-full overflow-y-hidden"
+            />
+            <hr className="my-10" />
+            <div
+              ref={editorRef}
+              id="editorjs"
+              className="dark:text-black bg-white rounded-md p-2"
+            />
+            <Button
+              onClick={handlePublish}
+              className="rounded-full w-full mt-8 capitalize"
+            >
               Publish
             </Button>
-          </div>
-        </AnimationWrapper>
-      )}
-    </Wrapper>
+            <div className="my-10"></div>
+          </AnimationWrapper>
+        ) : (
+          <AnimationWrapper>
+            <div>
+              <Image
+                src={banner}
+                width={600}
+                height={600}
+                alt="banner image"
+                className="w-full aspect-video rounded-lg overflow-hidden mt-4"
+              />
+            </div>
+            <h1 className="text-4xl font-medium mt-2 leading-tight line-clamp-2">
+              {title}
+            </h1>
+
+            <p className="line-clamp-2 text-xl leading-7 mt-4">{description}</p>
+
+            <div className="mt-6">
+              <p className="text-gray-700 mb-2">Blog Title</p>
+              <Input
+                type="text"
+                value={title}
+                onChange={(e) => setBlog({ ...blog, title: e.target.value })}
+                placeholder="Blog Title"
+                className="w-full bg-transparent p-2 rounded outline-none"
+              />
+              <p className="text-gray-700 mb-2 mt-9">
+                Short description about your blog.
+              </p>
+              <Textarea
+                placeholder="write a short description"
+                value={description}
+                maxLength={characterLimit}
+                onChange={(e) => {
+                  setBlog({ ...blog, description: e.target.value });
+                }}
+                className="h-48 sm:h-40"
+              />
+              <p className="text-sm text-right text-gray-700">
+                {characterLimit - description.length} Characters left
+              </p>
+
+              <p className="text-gray-700 mt-9 mb-2 text-sm">
+                Tags - (Helps searching and ranking your blog post.)
+              </p>
+
+              <div className="relative p-2 pb-4 bg-transparent">
+                <Input
+                  type="text"
+                  placeholder="Tags"
+                  className="sticky top-0 left-0 pl-4 py-2 w-full mb-3 "
+                  onKeyDown={handleKeyDown}
+                />
+                <div className="flex flex-wrap w-full">
+                  {tags.map((value, index) => {
+                    return (
+                      <div
+                        key={index}
+                        className="relative w-full flex p-2 mt-2 mr-2 pr-8 rounded-full gap-1 items-center px-5 "
+                      >
+                        <p className="outline-none">#{value}</p>
+
+                        <button onClick={() => handleTagDelete(value)}>
+                          <Cross2Icon />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <Button onClick={handleSubmit} className="w-full mb-8">
+                Publish
+              </Button>
+            </div>
+          </AnimationWrapper>
+        )}
+      </Wrapper>
+    </SignedIn>
   );
 }

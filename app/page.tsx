@@ -68,6 +68,7 @@ export default function Home() {
           <div className="w-full flex flex-col">
             <InPageNavigation
               routes={["Home", "Trending blog"]}
+              defaultHidden={["Trending blog"]}
               className="mt-6 sticky top-20 bg-white dark:bg-background"
             >
               <>

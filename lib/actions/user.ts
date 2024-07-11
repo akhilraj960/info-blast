@@ -1,8 +1,9 @@
 import User from "@/lib/models/User";
 import { connectDb } from "@/lib/mongoose";
 import { EmailAddressJSON } from "@clerk/backend";
+import { NextResponse } from "next/server";
 
-interface createUserProps {
+interface UserProps {
   clerkId: string | null;
   first_name: string | null;
   last_name: string | null;
@@ -18,7 +19,7 @@ export const createUser = async ({
   image_url,
   email_addresses,
   username,
-}: createUserProps): Promise<any> => {
+}: UserProps): Promise<any> => {
   try {
     await connectDb();
 
@@ -43,9 +44,46 @@ export const createUser = async ({
   }
 };
 
+export const updateUser = async ({
+  clerkId,
+  first_name,
+  last_name,
+  image_url,
+  email_addresses,
+  username,
+}: UserProps): Promise<any> => {
+  try {
+    await connectDb();
+
+    const updateData: any = {
+      "personal_info.firstName": first_name,
+      "personal_info.lastName": last_name,
+      "personal_info.profile_img": image_url,
+      "personal_info.email": email_addresses?.[0]?.email_address,
+      "personal_info.username": username,
+    };
+
+    const updateUser = await User.findOneAndUpdate(
+      { clerkId },
+      { $set: updateData },
+      { new: true }
+    );
+
+    if (!updateUser) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: "User Updated" }, { status: 200 });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const deleteUser = async (id: string) => {
   try {
     await connectDb();
     User.findByIdAndDelete({ clerkId: id });
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };

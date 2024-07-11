@@ -1,7 +1,7 @@
 import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { WebhookEvent, clerkClient } from "@clerk/nextjs/server";
-import { createUser } from "@/lib/actions/user";
+import { createUser, updateUser } from "@/lib/actions/user";
 
 export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
@@ -58,8 +58,6 @@ export async function POST(req: Request) {
     const { first_name, last_name, email_addresses, image_url, id, username } =
       evt?.data;
 
-    console.log(evt?.data);
-
     const newUser = await createUser({
       clerkId: id,
       first_name,
@@ -68,10 +66,6 @@ export async function POST(req: Request) {
       email_addresses,
       username,
     });
-
-    console.log("webhook");
-
-    console.log("webhook user", newUser);
 
     if (newUser) {
       await clerkClient.users.updateUserMetadata(id, {
@@ -82,8 +76,19 @@ export async function POST(req: Request) {
     }
   }
 
-  // console.log(`Webhook with and ID of ${id} and type of ${eventType}`)
-  // console.log('Webhook body:', body)
+  if (eventType === "user.updated") {
+    const { first_name, last_name, email_addresses, image_url, id, username } =
+      evt?.data;
+
+    const updatedUser: any = await updateUser({
+      clerkId: id,
+      first_name,
+      last_name,
+      image_url,
+      email_addresses,
+      username,
+    });
+  }
 
   return new Response("", { status: 200 });
 }

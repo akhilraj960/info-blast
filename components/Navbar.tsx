@@ -15,7 +15,6 @@ import {
   SignedIn,
   SignedOut,
   SignOutButton,
-  UserButton,
   useUser,
 } from "@clerk/nextjs";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "./ui/sheet";
@@ -61,6 +60,59 @@ export const Navbar = () => {
             </Link>
 
             <div className="hidden max-md:flex">
+              <SignedOut>
+                <Link
+                  href="/sign-in"
+                  className={cn(
+                    buttonVariants({ className: "rounded-full min-w-30" })
+                  )}
+                >
+                  Sign In
+                </Link>
+              </SignedOut>
+            </div>
+
+            <nav className="hidden md:flex items-center gap-10">
+              <ThemeMode />
+              <Link
+                href="/write"
+                className={cn(
+                  buttonVariants({
+                    variant: "secondary",
+                    className: "rounded-full flex gap-1 min-w-30",
+                  })
+                )}
+              >
+                <TfiWrite />
+                create
+              </Link>
+              <SignedOut>
+                <Link
+                  href="/sign-in"
+                  className={cn(
+                    buttonVariants({ className: "rounded-full min-w-30" })
+                  )}
+                >
+                  Sign In
+                </Link>
+              </SignedOut>
+
+              <SignedIn>
+                {user && (
+                  <SheetTrigger>
+                    <Image
+                      src={user.imageUrl}
+                      width={200}
+                      height={200}
+                      alt="profile"
+                      className="rounded-full w-12 h-12 object-cover border"
+                    />
+                  </SheetTrigger>
+                )}
+              </SignedIn>
+            </nav>
+
+            <div className="hidden max-md:flex">
               <SheetTrigger>
                 {isLoaded && user && (
                   <Image
@@ -99,9 +151,17 @@ export const Navbar = () => {
                     </div>
                     <div className="mt-5 flex flex-col gap-2">
                       <SheetClose asChild>
-                        <Button className="w-full" variant="outline">
+                        <Link
+                          href={`/profile/${"fdafa"}`}
+                          className={cn(
+                            buttonVariants({
+                              className: "w-full",
+                              variant: "outline",
+                            })
+                          )}
+                        >
                           Profile
-                        </Button>
+                        </Link>
                       </SheetClose>
                       <SheetClose asChild>
                         <Button
@@ -177,45 +237,6 @@ export const Navbar = () => {
                 )}
               </SheetContent>
             </div>
-
-            <nav className="hidden md:flex items-center gap-10">
-              <ThemeMode />
-              <Link
-                href="/write"
-                className={cn(
-                  buttonVariants({
-                    variant: "secondary",
-                    className: "rounded-full flex gap-1 min-w-30",
-                  })
-                )}
-              >
-                <TfiWrite />
-                create
-              </Link>
-              <SignedOut>
-                <Link
-                  href="/sign-in"
-                  className={cn(
-                    buttonVariants({ className: "rounded-full min-w-30" })
-                  )}
-                >
-                  Sign In
-                </Link>
-              </SignedOut>
-              <SignedIn>
-                {user && (
-                  <SheetTrigger>
-                    <Image
-                      src={user.imageUrl}
-                      width={200}
-                      height={200}
-                      alt="profile"
-                      className="rounded-full w-12 h-12 object-cover border"
-                    />
-                  </SheetTrigger>
-                )}
-              </SignedIn>
-            </nav>
           </div>
         </header>
       </Sheet>

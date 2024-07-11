@@ -5,6 +5,9 @@ import { connectDb } from "@/lib/mongoose";
 
 export async function POST(request: NextRequest) {
   try {
+
+    await connectDb()
+
     const { blogId } = await request.json();
 
     if (!Types.ObjectId.isValid(blogId)) {

@@ -11,12 +11,7 @@ import { TfiWrite } from "react-icons/tfi";
 import { ThemeMode } from "./ThemeMode";
 import { AnimationWrapper } from "./AnimationWrapper";
 import { useTheme } from "next-themes";
-import {
-  SignedIn,
-  SignedOut,
-  SignOutButton,
-  useUser,
-} from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignOutButton, useUser } from "@clerk/nextjs";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "./ui/sheet";
 import { CiLogout } from "react-icons/ci";
 
@@ -59,19 +54,6 @@ export const Navbar = () => {
               <h2 className="text-2xl font-sans max-md:hidden">InfoBlast</h2>
             </Link>
 
-            <div className="hidden max-md:flex">
-              <SignedOut>
-                <Link
-                  href="/sign-in"
-                  className={cn(
-                    buttonVariants({ className: "rounded-full min-w-30" })
-                  )}
-                >
-                  Sign In
-                </Link>
-              </SignedOut>
-            </div>
-
             <nav className="hidden md:flex items-center gap-10">
               <ThemeMode />
               <Link
@@ -86,6 +68,7 @@ export const Navbar = () => {
                 <TfiWrite />
                 create
               </Link>
+
               <SignedOut>
                 <Link
                   href="/sign-in"
@@ -152,7 +135,7 @@ export const Navbar = () => {
                     <div className="mt-5 flex flex-col gap-2">
                       <SheetClose asChild>
                         <Link
-                          href={`/profile/${"fdafa"}`}
+                          href={`/profile/${user?.username}`}
                           className={cn(
                             buttonVariants({
                               className: "w-full",
@@ -172,9 +155,9 @@ export const Navbar = () => {
                           Write
                         </Button>
                       </SheetClose>
-                      <SheetClose asChild>
+                      {/* <SheetClose asChild>
                         <Link
-                          href={`/${"fdafa"}/blogs`}
+                          href={`/${user?.username}/blogs`}
                           className={cn(
                             buttonVariants({
                               className: "w-full",
@@ -189,10 +172,10 @@ export const Navbar = () => {
                         <Button className="w-full" variant="outline">
                           Draft
                         </Button>
-                      </SheetClose>
+                      </SheetClose> */}
                       <SheetClose asChild>
                         <Link
-                          href={"/profile"}
+                          href={"/manage-account"}
                           className={cn(
                             buttonVariants({
                               variant: "outline",
@@ -237,6 +220,18 @@ export const Navbar = () => {
                 )}
               </SheetContent>
             </div>
+            <SignedOut>
+              <div className="hidden max-md:flex">
+                <Link
+                  href="/sign-in"
+                  className={cn(
+                    buttonVariants({ className: "rounded-full min-w-30" })
+                  )}
+                >
+                  Sign In
+                </Link>
+              </div>
+            </SignedOut>
           </div>
         </header>
       </Sheet>

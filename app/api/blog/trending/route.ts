@@ -1,8 +1,11 @@
 import Blog from "@/lib/models/Blog";
+import { connectDb } from "@/lib/mongoose";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
+    await connectDb();
+
     const result = await Blog.aggregate([
       { $match: { draft: false } },
       {

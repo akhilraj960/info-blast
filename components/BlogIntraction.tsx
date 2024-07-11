@@ -23,7 +23,7 @@ export const BlogIntraction = ({
       <Divider className="mt-6" />
       <div className="flex items-center justify-between px-4 my-4">
         <Link
-          href={`/user/${encodeURIComponent(username)}`}
+          href={`/profile/${encodeURIComponent(username)}`}
           className="flex gap-4 items-center"
         >
           <div className="flex gap-1">
@@ -45,7 +45,6 @@ export const BlogIntraction = ({
         </Link>
         <div>
           <div className="flex items-center gap-8">
-           
             <p className="flex items-center text-sm text-primary/60">
               <CiHeart size={25} />
               {likes}

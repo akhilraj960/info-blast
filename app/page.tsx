@@ -13,6 +13,9 @@ import { Wrapper } from "@/components/Wrapper";
 import { Button } from "@/components/ui/button";
 import { Blog } from "@/types/types";
 import { filterPaginationData } from "@/utils/filterPaginationData";
+import { map } from "svix/dist/openapi/rxjsStub";
+import { BlogCardSkeleton } from "@/components/SkeletonLoaders/BlogCardSkeleton";
+import { MinimalBlogPostSkeleton } from "@/components/SkeletonLoaders/MinimalBlogPostSkeleton";
 
 const categories = [
   "programming",
@@ -86,7 +89,11 @@ export default function Home() {
             >
               <>
                 {!blogs ? (
-                  <Loader />
+                  <>
+                    {[...Array(5)].map((_, index) => (
+                      <BlogCardSkeleton key={index} />
+                    ))}
+                  </>
                 ) : blogs.results.length ? (
                   blogs.results.map((blog, i) => (
                     <AnimationWrapper
@@ -107,10 +114,19 @@ export default function Home() {
               <>
                 <div>
                   {!trendingBlogs ? (
-                    <Loader />
+                    <>
+                      {[...Array(5)].map((_, index) => (
+                        <BlogCardSkeleton key={index} />
+                      ))}
+                    </>
                   ) : (
                     trendingBlogs.map((blog: any, index: number) => (
-                      <BlogCard key={index} content={blog} />
+                      <AnimationWrapper
+                        key={index}
+                        transition={{ duration: 1, delay: index * 0.1 }}
+                      >
+                        <BlogCard content={blog} />
+                      </AnimationWrapper>
                     ))
                   )}
                 </div>
@@ -127,8 +143,9 @@ export default function Home() {
                 <div className="flex gap-6 flex-wrap mt-4">
                   {categories.map((cat, index) => (
                     <Button
+                      disabled
                       key={index}
-                      className="rounded-full text-sm capitalize"
+                      className="rounded-full text-sm capitalize cursor-default"
                       variant="outline"
                     >
                       {cat}
@@ -144,7 +161,11 @@ export default function Home() {
                 </div>
                 <div className="mt-8 pb-10">
                   {!trendingBlogs ? (
-                    <Loader />
+                    <>
+                      {[...Array(5)].map((_, index) => (
+                        <MinimalBlogPostSkeleton key={index} />
+                      ))}
+                    </>
                   ) : (
                     trendingBlogs.map((blog: any, index: number) => (
                       <MinimalBlogPost

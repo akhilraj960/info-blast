@@ -7,18 +7,19 @@ import { BlogContent } from "./BlogContent";
 
 export const BlogView = ({ blogData }: { blogData: Blog }) => {
   const {
+    _id,
     title,
     banner,
     description,
     content,
     tags,
+    author,
     author: {
       personal_info: { username, profile_img },
     },
     activity: { total_likes, total_comments },
     publishedAt,
   } = blogData;
-
 
   return (
     <div>
@@ -38,8 +39,15 @@ export const BlogView = ({ blogData }: { blogData: Blog }) => {
         username={username}
         likes={total_likes}
         comments={total_comments}
+        blogId={_id}
+        userId={author._id}
       />
-      <BlogContent block={content}/>
+
+      <p className="p-1 px-2 mt-6 rounded-full bg-primary/20 text-sm max-w-max capitalize">
+        #{tags[0]}
+      </p>
+
+      <BlogContent block={content} />
     </div>
   );
 };

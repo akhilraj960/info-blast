@@ -1,23 +1,62 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Divider } from "./Divider";
-import dayjs from "dayjs";
 import { CiChat1, CiHeart } from "react-icons/ci";
+import axios from "axios";
 
 export const BlogIntraction = ({
   profile,
   username,
   comments,
   likes,
+  blogId,
+  userId,
 }: {
   profile: string;
   username: string;
   comments: number;
   likes: number;
+  blogId: string;
+  userId: string | undefined;
 }) => {
+  const [liked, setLiked] = useState<boolean | null>(null);
+  const [likeCount, setLikeCount] = useState<number>(likes);
+
+  const likeFn = async () => {
+    const response = await axios.post("/api/blog/like/like", {
+      userId,
+      blogId,
+    });
+
+    if (response) {
+      hasLiked();
+    }
+
+    if (response.data.Liked) {
+      setLikeCount(likeCount + 1);
+    } else {
+      setLikeCount(likeCount - 1);
+    }
+  };
+
+  const hasLiked = async () => {
+    const response = await axios.post("/api/blog/like/hasliked", {
+      userId,
+      blogId,
+    });
+
+    if (response) {
+      setLiked(response.data.Liked);
+    }
+  };
+
+  useEffect(() => {
+    hasLiked();
+  }, []);
+
   return (
     <>
       <Divider className="mt-6" />
@@ -46,8 +85,13 @@ export const BlogIntraction = ({
         <div>
           <div className="flex items-center gap-8">
             <p className="flex items-center text-sm text-primary/60">
-              <CiHeart size={25} />
-              {likes}
+              <CiHeart
+                size={25}
+                onClick={likeFn}
+                style={{ color: liked ? "red" : "" }}
+                className="cursor-pointer"
+              />
+              {likeCount}
             </p>
             <p className="flex items-center text-sm text-primary/60">
               <CiChat1 size={25} />

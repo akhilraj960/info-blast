@@ -4,7 +4,6 @@ import { ThemeProvider as NextThemesProvider } from "next-themes"
 import { type ThemeProviderProps } from "next-themes/dist/types"
 import { AnimationWrapper } from "./AnimationWrapper"
 import { useTheme } from "next-themes"
-import { useEffect, useState } from "react"
 
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   const { theme } = useTheme();

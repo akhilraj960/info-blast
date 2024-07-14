@@ -30,7 +30,7 @@ const blogSchema = new Schema<IBlog>(
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,
-      ref:"User",
+      ref: "User",
       required: true,
     },
     activity: {

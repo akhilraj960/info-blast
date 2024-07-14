@@ -1,4 +1,5 @@
 export interface Author {
+  _id?: string;
   personal_info: {
     firstName: string;
     lastName: string;
@@ -12,6 +13,7 @@ export interface Activity {
 }
 
 export interface Blog {
+  _id: string;
   blog_id: string;
   title: string;
   banner: string;

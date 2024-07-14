@@ -3,6 +3,7 @@
 import { AnimationWrapper } from "@/components/AnimationWrapper";
 import { BlogView } from "@/components/BlogView";
 import { Loader } from "@/components/Loader";
+import { BlogViewSkeleton } from "@/components/SkeletonLoaders/BlogViewSkeleton";
 import { Wrapper } from "@/components/Wrapper";
 import { Blog } from "@/types/types"; // Ensure Blog type is correctly defined in this path
 import axios from "axios";
@@ -21,6 +22,7 @@ export default function BlogDetails({
     try {
       const response = await axios.post("/api/blog/one", { blogId });
       setBlog(response.data.blog);
+      console.log(response.data)
     } catch (error) {
       console.log(error);
     }
@@ -35,7 +37,7 @@ export default function BlogDetails({
       <AnimationWrapper>
         <Wrapper className="max-w-[800px] mb-20">
           {blog === null ? (
-            <Loader />
+            <BlogViewSkeleton />
           ) : (
             <div className="mt-8">
               <BlogView blogData={blog} />

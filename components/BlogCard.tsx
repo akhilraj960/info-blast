@@ -24,7 +24,7 @@ export const BlogCard = ({ content }: { content: any }) => {
     <>
       <div className="flex flex-col gap-4 mt-2">
         {/* author info  */}
-        <Link href={"/"} className="flex items-center gap-5">
+        <Link href={`/profile/${username}`} className="flex items-center gap-5">
           <Image
             src={profile_img}
             width={20}

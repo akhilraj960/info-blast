@@ -12,7 +12,9 @@ const Img = ({ url, caption }: { url: string; caption: string }) => {
         className="w-full object-cover"
       />
       {caption && (
-        <p className="w-full text-center text-primary/60 italic my-3 md:mb-12 text-sm">{caption}</p>
+        <p className="w-full text-center text-primary/60 italic my-3 md:mb-12 text-sm">
+          {caption}
+        </p>
       )}
     </div>
   );
@@ -61,8 +63,6 @@ export const BlogContent = ({ block }: { block: any }) => {
   return (
     <div>
       {block[0].blocks.map((value: any, index: number) => {
-        console.log(value);
-
         if (value.type === "header") {
           const Tag = value.data.level === 2 ? "h2" : "h3";
           return (

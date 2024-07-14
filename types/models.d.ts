@@ -29,6 +29,7 @@ export interface IUser extends Document {
 }
 
 export interface IBlog extends Document {
+  _id?: string;
   blog_id: string;
   title: string;
   banner: string;
@@ -45,4 +46,9 @@ export interface IBlog extends Document {
   comments: mongoose.Types.ObjectId[];
   draft: boolean;
   publishedAt: Date;
+}
+
+export interface ILike extends Document {
+  blogId: mongoose.Types.ObjectId;
+  likes: [{ userId: mongoose.Types.ObjectId }];
 }

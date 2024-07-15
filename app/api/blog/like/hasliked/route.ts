@@ -1,21 +1,43 @@
 import Like from "@/lib/models/Like";
+import { connectDb } from "@/lib/mongoose";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { Types } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
-interface PostType extends Document {
-  title: string;
-  content: string;
-  likes: { userId: Types.ObjectId }[];
-}
-
 export async function POST(req: NextRequest) {
   try {
+    if (req.method !== "POST") {
+      return NextResponse.json(
+        { message: "Method Not Allowed" },
+        { status: 405 }
+      );
+    }
+
+    const { userId } = auth();
+
+    if (!userId) {
+      return NextResponse.json(
+        { message: "You are not authenticated" },
+        { status: 401 }
+      );
+    }
+
+    const user = await clerkClient.users.getUser(userId);
+
+    if (!user) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
+
+    const collectionId = user.publicMetadata.userId;
+
+    await connectDb();
+
     const body = await req.json();
-    const { userId, blogId } = body;
+    const { blogId } = body;
 
     const existingLike = await Like.findOne({
       blogId: blogId,
-      "likes.userId": userId,
+      "likes.userId": collectionId,
     });
 
     if (!existingLike) {

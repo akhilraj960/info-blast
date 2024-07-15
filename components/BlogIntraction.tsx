@@ -6,6 +6,8 @@ import { Button } from "./ui/button";
 import { Divider } from "./Divider";
 import { CiChat1, CiHeart } from "react-icons/ci";
 import axios from "axios";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 export const BlogIntraction = ({
   profile,
@@ -24,10 +26,16 @@ export const BlogIntraction = ({
 }) => {
   const [liked, setLiked] = useState<boolean | null>(null);
   const [likeCount, setLikeCount] = useState<number>(likes);
+  const router = useRouter();
+
+  const { isSignedIn } = useUser();
+
 
   const likeFn = async () => {
+    if (!isSignedIn) {
+      return router.push("/sign-in");
+    }
     const response = await axios.post("/api/blog/like/like", {
-      userId,
       blogId,
     });
 
@@ -44,7 +52,6 @@ export const BlogIntraction = ({
 
   const hasLiked = async () => {
     const response = await axios.post("/api/blog/like/hasliked", {
-      userId,
       blogId,
     });
 
@@ -93,10 +100,10 @@ export const BlogIntraction = ({
               />
               {likeCount}
             </p>
-            <p className="flex items-center text-sm text-primary/60">
+            {/* <p className="flex items-center text-sm text-primary/60">
               <CiChat1 size={25} />
               {comments}
-            </p>
+            </p> */}
           </div>
         </div>
       </div>

@@ -5,40 +5,38 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { username, page, maxLimit } = body;
-
-    console.log(body);
+    const { username, page = 1, maxLimit = 10 } = body;
 
     if (!username) {
       return NextResponse.json(
-        { message: "value not specified" },
+        { message: "Username not specified" },
         { status: 400 }
       );
     }
 
     await connectDb();
 
+    // Set a longer timeout
+    await Blog.db.db.command({ ping: 1 }); // Ensure the connection is established
+
     const result = await Blog.aggregate([
       { $match: { draft: false } },
       {
         $lookup: {
           from: "users",
-          localField: "author",
-          foreignField: "_id",
+          let: { authorId: "$author" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$_id", "$$authorId"] } } },
+            { $project: { personal_info: 1 } }
+          ],
           as: "author",
         },
       },
       { $unwind: "$author" },
       { $match: { "author.personal_info.username": username } },
-      {
-        $sort: { publishedAt: -1 },
-      },
-      {
-        $skip: (page - 1) * maxLimit,
-      },
-      {
-        $limit: maxLimit,
-      },
+      { $sort: { publishedAt: -1 } },
+      { $skip: (page - 1) * maxLimit },
+      { $limit: maxLimit },
       {
         $project: {
           blog_id: 1,
@@ -52,10 +50,9 @@ export async function POST(req: NextRequest) {
           "author.personal_info.username": 1,
           "author.personal_info.firstName": 1,
           "author.personal_info.lastName": 1,
-          _id: 1,
         },
       },
-    ]);
+    ]).option({ maxTimeMS: 20000 }); // Increase the max time allowed for the query
 
     if (result.length === 0) {
       return NextResponse.json({ message: "Data not found" }, { status: 404 });

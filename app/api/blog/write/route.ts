@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     const user = await clerkClient.users.getUser(userId);
 
     const collectionId = user.publicMetadata.userId;
-    
+
     const body = await request.json();
     const { title, banner, content, tags, description, draft } = body.blog;
 
@@ -80,7 +80,11 @@ export async function POST(request: Request) {
     );
 
     return NextResponse.json(
-      { message: "Blog created successfully" },
+      {
+        message: "Blog created successfully",
+        success: true,
+        blogId: savedBlog._id,
+      },
       { status: 201 }
     );
   } catch (error) {

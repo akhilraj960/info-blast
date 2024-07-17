@@ -69,10 +69,10 @@ export const BlogCard = ({ content }: { content: any }) => {
               <CiHeart size={25} />
               {total_likes}
             </p>
-            <p className="flex items-center text-sm text-primary/60">
+            {/* <p className="flex items-center text-sm text-primary/60">
               <CiChat1 size={25} />
               {total_comments}
-            </p>
+            </p> */}
           </div>
         </Link>
       </div>

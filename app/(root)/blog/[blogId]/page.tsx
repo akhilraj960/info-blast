@@ -22,7 +22,6 @@ export default function BlogDetails({
     try {
       const response = await axios.post("/api/blog/one", { blogId });
       setBlog(response.data.blog);
-      console.log(response.data)
     } catch (error) {
       console.log(error);
     }

@@ -15,54 +15,50 @@ export const BlogIntraction = ({
   comments,
   likes,
   blogId,
-  userId,
 }: {
   profile: string;
   username: string;
   comments: number;
   likes: number;
   blogId: string;
-  userId: string | undefined;
 }) => {
   const [liked, setLiked] = useState<boolean | null>(null);
   const [likeCount, setLikeCount] = useState<number>(likes);
   const router = useRouter();
-
   const { isSignedIn } = useUser();
-
 
   const likeFn = async () => {
     if (!isSignedIn) {
       return router.push("/sign-in");
     }
-    const response = await axios.post("/api/blog/like/like", {
-      blogId,
-    });
+    const response = await axios.post("/api/blog/like/like", { blogId });
 
     if (response) {
       hasLiked();
     }
 
     if (response.data.Liked) {
-      setLikeCount(likeCount + 1);
+      setLikeCount((prev) => prev + 1);
     } else {
-      setLikeCount(likeCount - 1);
+      setLikeCount((prev) => prev - 1);
     }
   };
 
   const hasLiked = async () => {
-    const response = await axios.post("/api/blog/like/hasliked", {
-      blogId,
-    });
+    try {
+      const response = await axios.post("/api/blog/like/hasliked", { blogId });
 
-    if (response) {
-      setLiked(response.data.Liked);
+      if (response.data?.Liked !== undefined) {
+        setLiked(response.data.Liked);
+      }
+    } catch (error) {
+      console.error("Error checking if liked:", error);
     }
   };
 
   useEffect(() => {
     hasLiked();
-  }, []);
+  }, [blogId]);
 
   return (
     <>
@@ -82,12 +78,12 @@ export const BlogIntraction = ({
             />
             <p className="text-sm">@{username}</p>
           </div>
-          <Button
+          {/* <Button
             variant={"outline"}
             className="border-none shadow-none hover:bg-transparent"
           >
             Follow
-          </Button>
+          </Button> */}
         </Link>
         <div>
           <div className="flex items-center gap-8">

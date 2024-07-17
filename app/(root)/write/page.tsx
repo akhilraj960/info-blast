@@ -218,10 +218,12 @@ export default function WritePage() {
   };
 
   const handleSubmit = async (e: any) => {
-    console.log(blog);
     const response = await axios.post("/api/blog/write", { blog });
 
-    console.log(response);
+    if (response.data.success) {
+      toast.success("Success");
+      router.push(`/blog/${response.data.blogId}`);
+    }
   };
 
   return (

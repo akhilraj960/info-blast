@@ -50,5 +50,5 @@ export interface IBlog extends Document {
 
 export interface ILike extends Document {
   blogId: mongoose.Types.ObjectId;
-  likes: [{ userId: mongoose.Types.ObjectId }];
+  likes: mongoose.Types.ObjectId;
 }

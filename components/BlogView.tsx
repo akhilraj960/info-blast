@@ -40,7 +40,6 @@ export const BlogView = ({ blogData }: { blogData: Blog }) => {
         likes={total_likes}
         comments={total_comments}
         blogId={_id}
-        userId={author._id}
       />
 
       <p className="p-1 px-2 mt-6 rounded-full bg-primary/20 text-sm max-w-max capitalize">
@@ -48,6 +47,14 @@ export const BlogView = ({ blogData }: { blogData: Blog }) => {
       </p>
 
       <BlogContent block={content} />
+
+      <BlogIntraction
+        profile={profile_img}
+        username={username}
+        likes={total_likes}
+        comments={total_comments}
+        blogId={_id}
+      />
     </div>
   );
 };

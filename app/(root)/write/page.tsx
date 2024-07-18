@@ -258,7 +258,7 @@ export default function WritePage() {
               value={title}
               placeholder="Blog Title"
               onChange={(e) => setBlog({ ...blog, title: e.target.value })}
-              className="mt-10 text-4xl resize-none font-medium h-20 bg-transparent outline-none leading-tight placeholder-opacity-40 w-full overflow-y-hidden"
+              className="mt-10 text-4xl resize-none font-medium h-30 bg-transparent outline-none leading-tight placeholder-opacity-40 w-full overflow-y-hidden"
             />
             <hr className="my-10" />
             <div

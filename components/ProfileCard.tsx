@@ -21,7 +21,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
   total_reads,
 }) => {
   return (
-    <AnimationWrapper className="shadow-lg rounded-md p-8 w-full">
+    <AnimationWrapper className="shadow-md rounded-md p-8 w-full">
       <div className="flex flex-col justify-center items-center gap-3">
         <p className="text-lg font-semibold">
           {firstName} {lastName}
@@ -31,7 +31,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
           width={60}
           height={60}
           alt="profile image"
-          className="w-20 h-20 rounded-full"
+          className="w-20 h-20 rounded-full border-2"
         />
         <p className="text-sm">@{username}</p>
       </div>

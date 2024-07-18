@@ -23,10 +23,25 @@ interface FetchParams {
   maxLimit?: number;
 }
 
+interface UserProfile {
+  user: {
+    personal_info: {
+      username: string;
+      profile_img: string;
+      firstName: string;
+      lastName: string;
+    };
+    account_info: {
+      total_posts: number;
+      total_reads: number;
+    };
+  };
+}
+
 export default function ProfilePage() {
   const [blogs, setBlogs] = useState<Blogs | null>(null);
   const [pageState, setPageState] = useState<string>("blog");
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const { slug } = useParams();
 
   useEffect(() => {
@@ -57,10 +72,12 @@ export default function ProfilePage() {
   };
 
   const userProfile = async () => {
-    const result = await axios.post("/api/user/profile", { username: slug });
-    console.log(result);
-    setProfile(result.data);
-    console.log(profile);
+    try {
+      const { data } = await axios.post("/api/user/profile", { username: slug });
+      setProfile(data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -68,129 +85,117 @@ export default function ProfilePage() {
   }, [profile]);
 
   return (
-    <>
-      <AnimationWrapper>
-        <Wrapper className="flex gap-4 max-w-[1200px]">
-          <div className="flex w-[60%] max-md:w-full">
-            <div className="w-full flex flex-col">
-              <div className="visible md:hidden">
-                <InPageNavigation
-                  routes={["Profile", "Blogs"]}
-                  defaultHidden={["Profile"]}
-                  className="mt-6 sticky top-20 bg-white dark:bg-background"
-                >
-                  {/* Profile  */}
+    <AnimationWrapper>
+      <Wrapper className="flex gap-4 max-w-[1200px]">
+        <div className="flex w-[60%] max-md:w-full">
+          <div className="w-full flex flex-col">
+            <div className="visible md:hidden">
+              <InPageNavigation
+                routes={["Profile", "Blogs"]}
+                defaultHidden={["Profile"]}
+                className="mt-6 sticky top-20 bg-white dark:bg-background"
+              >
+                {!profile ? (
+                  <Loader />
+                ) : (
+                  <ProfileCard
+                    username={profile.user.personal_info.username}
+                    image_url={profile.user.personal_info.profile_img}
+                    firstName={profile.user.personal_info.firstName}
+                    lastName={profile.user.personal_info.lastName}
+                    total_posts={profile.user.account_info.total_posts}
+                    total_reads={profile.user.account_info.total_reads}
+                  />
+                )}
 
+                {!blogs ? (
                   <>
-                    {!profile ? (
-                      <Loader />
-                    ) : (
-                      <ProfileCard
-                        username={profile.user.personal_info.username}
-                        image_url={profile.user.personal_info.profile_img}
-                        firstName={profile.user.personal_info.firstName}
-                        lastName={profile.user.personal_info.lastName}
-                      />
-                    )}
+                    {[...Array(5)].map((_, i) => (
+                      <BlogCardSkeleton key={i} />
+                    ))}
                   </>
+                ) : blogs.results.length ? (
+                  blogs.results.map((blog, i) => (
+                    <AnimationWrapper
+                      key={i}
+                      transition={{ duration: 1, delay: i * 0.1 }}
+                    >
+                      <BlogCard content={blog} />
+                    </AnimationWrapper>
+                  ))
+                ) : null}
+                <LoadMoreData
+                  state={blogs}
+                  fetchDataFn={pageState === "blog" ? userBlogs : undefined}
+                />
+              </InPageNavigation>
+            </div>
+            <div className="visible max-md:hidden">
+              <InPageNavigation
+                routes={["Profile", "Blogs"]}
+                defaultActiveIndex={1}
+                defaultHidden={["Profile"]}
+                className="mt-6 sticky top-20 bg-white dark:bg-background"
+              >
+                {!profile ? (
+                  <Loader />
+                ) : (
+                  <ProfileCard
+                    username={profile.user.personal_info.username}
+                    image_url={profile.user.personal_info.profile_img}
+                    firstName={profile.user.personal_info.firstName}
+                    lastName={profile.user.personal_info.lastName}
+                    total_posts={profile.user.account_info.total_posts}
+                    total_reads={profile.user.account_info.total_reads}
+                  />
+                )}
 
-                  {/* Blogs  */}
+                {!blogs ? (
                   <>
-                    {!blogs ? (
-                      <>
-                        {[...Array(5)].map((_, i) => (
-                          <BlogCardSkeleton key={i} />
-                        ))}
-                      </>
-                    ) : blogs.results.length ? (
-                      blogs.results.map((blog, i) => (
-                        <AnimationWrapper
-                          key={i}
-                          transition={{ duration: 1, delay: i * 0.1 }}
-                        >
-                          <BlogCard content={blog} />
-                        </AnimationWrapper>
-                      ))
-                    ) : null}
-                    <LoadMoreData
-                      state={blogs}
-                      fetchDataFn={pageState === "blog" ? userBlogs : undefined}
-                    />
+                    {[...Array(5)].map((_, i) => (
+                      <BlogCardSkeleton key={i} />
+                    ))}
                   </>
-                </InPageNavigation>
-              </div>
-              <div className="visible max-md:hidden">
-                <InPageNavigation
-                  routes={["Profile", "Blogs"]}
-                  defaultActiveIndex={1}
-                  defaultHidden={["Profile"]}
-                  className="mt-6 sticky top-20 bg-white dark:bg-background"
-                >
-                  {/* Profile  */}
+                ) : blogs.results.length ? (
+                  blogs.results.map((blog, i) => (
+                    <AnimationWrapper
+                      key={i}
+                      transition={{ duration: 1, delay: i * 0.1 }}
+                    >
+                      <BlogCard content={blog} />
+                    </AnimationWrapper>
+                  ))
+                ) : null}
+                <LoadMoreData
+                  state={blogs}
+                  fetchDataFn={pageState === "blog" ? userBlogs : undefined}
+                />
+              </InPageNavigation>
+            </div>
+          </div>
+        </div>
 
-                  <>
-                    {!profile ? (
-                      <Loader />
-                    ) : (
-                      <ProfileCard
-                        username={profile.user.personal_info.username}
-                        image_url={profile.user.personal_info.profile_img}
-                        firstName={profile.user.personal_info.firstName}
-                        lastName={profile.user.personal_info.lastName}
-                      />
-                    )}
-                  </>
-
-                  {/* Blogs  */}
-                  <>
-                    {!blogs ? (
-                      <>
-                        {[...Array(5)].map((_, i) => (
-                          <BlogCardSkeleton key={i} />
-                        ))}
-                      </>
-                    ) : blogs.results.length ? (
-                      blogs.results.map((blog, i) => (
-                        <AnimationWrapper
-                          key={i}
-                          transition={{ duration: 1, delay: i * 0.1 }}
-                        >
-                          <BlogCard content={blog} />
-                        </AnimationWrapper>
-                      ))
-                    ) : null}
-                    <LoadMoreData
-                      state={blogs}
-                      fetchDataFn={pageState === "blog" ? userBlogs : undefined}
-                    />
-                  </>
-                </InPageNavigation>
+        <div className="max-md:hidden w-[400px] border-l overflow-auto">
+          <div className="fixed w-[400px] h-full p-4">
+            <div className="w-[400px] h-full overflow-y-scroll no-scrollbar mb-10">
+              <div className="mt-10 p-10 w-full h-full flex justify-center items-center">
+                {!profile ? (
+                  <Loader />
+                ) : (
+                  <ProfileCard
+                    username={profile.user.personal_info.username}
+                    image_url={profile.user.personal_info.profile_img}
+                    firstName={profile.user.personal_info.firstName}
+                    lastName={profile.user.personal_info.lastName}
+                    total_posts={profile.user.account_info.total_posts}
+                    total_reads={profile.user.account_info.total_reads}
+                  />
+                )}
               </div>
             </div>
           </div>
-
-          {/* Profile section  */}
-
-          <div className="max-md:hidden w-[400px] border-l overflow-auto">
-            <div className="fixed w-[400px] h-full p-4">
-              <div className="w-[400px] h-full overflow-y-scroll no-scrollbar mb-10">
-                <div className="mt-10 flex justify-center items-center">
-                  {!profile ? (
-                    <Loader />
-                  ) : (
-                    <ProfileCard
-                      username={profile.user.personal_info.username}
-                      image_url={profile.user.personal_info.profile_img}
-                      firstName={profile.user.personal_info.firstName}
-                      lastName={profile.user.personal_info.lastName}
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </Wrapper>
-      </AnimationWrapper>
-    </>
+        </div>
+      </Wrapper>
+    </AnimationWrapper>
   );
 }

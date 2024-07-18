@@ -10,9 +10,9 @@ export const BlogCardSkeleton = () => {
           <Skeleton className="py-1 px-10" />
         </div>
         <div className="flex items-center justify-between gap-4">
-          <div className="flex flex-col gap-1">
-            <Skeleton className="py-4 px-20" />
-            <Skeleton className="py-2 px-20" />
+          <div className="flex flex-col gap-1 w-full">
+            <Skeleton className="py-4 w-full px-20" />
+            <Skeleton className="py-2 w-full px-20" />
           </div>
           <div>
             <Skeleton className="min-w-32 aspect-video max-sm:min-w-28" />

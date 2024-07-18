@@ -1,21 +1,31 @@
 import React from "react";
 import { AnimationWrapper } from "./AnimationWrapper";
 import Image from "next/image";
+import { formatToK } from "@/utils/formatTok";
 
-export const ProfileCard = ({
-  image_url,
-  username,
-  firstName,
-  lastName,
-}: {
+interface ProfileCardProps {
   image_url: string;
   username: string;
   firstName: string;
   lastName: string;
+  total_posts: number;
+  total_reads: number;
+}
+
+export const ProfileCard: React.FC<ProfileCardProps> = ({
+  image_url,
+  username,
+  firstName,
+  lastName,
+  total_posts,
+  total_reads,
 }) => {
   return (
-    <AnimationWrapper>
-      <div className="flex flex-col justify-center items-center gap-6">
+    <AnimationWrapper className="shadow-lg rounded-md p-8 w-full">
+      <div className="flex flex-col justify-center items-center gap-3">
+        <p className="text-lg font-semibold">
+          {firstName} {lastName}
+        </p>
         <Image
           src={image_url}
           width={60}
@@ -24,10 +34,10 @@ export const ProfileCard = ({
           className="w-20 h-20 rounded-full"
         />
         <p className="text-sm">@{username}</p>
-
-        <p>
-          {firstName} {lastName}
-        </p>
+      </div>
+      <div className="mt-10 flex justify-between">
+        <p>Posts: {formatToK(total_posts)}</p>
+        <p>Reads: {formatToK(total_reads)}</p>
       </div>
     </AnimationWrapper>
   );

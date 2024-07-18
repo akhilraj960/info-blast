@@ -6,7 +6,9 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     const { username } = body;
-    const userData = await User.findOne({ "personal_info.username": username }).select("activity personal_info")
+    const userData = await User.findOne({
+      "personal_info.username": username,
+    }).select("account_info personal_info");
 
     if (!userData) {
       return NextResponse.json({ message: "User Not Found" }, { status: 404 });

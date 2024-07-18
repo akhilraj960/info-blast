@@ -4,6 +4,9 @@ import { BlogIntraction } from "./BlogIntraction";
 import dayjs from "dayjs";
 import Image from "next/image";
 import { BlogContent } from "./BlogContent";
+import { Button } from "./ui/button";
+import Link from "next/link";
+import { useUser } from "@clerk/nextjs";
 
 export const BlogView = ({ blogData }: { blogData: Blog }) => {
   const {
@@ -21,6 +24,10 @@ export const BlogView = ({ blogData }: { blogData: Blog }) => {
     publishedAt,
   } = blogData;
 
+  const { user } = useUser();
+
+  const userId = user?.publicMetadata.userId;
+
   return (
     <div>
       <Image
@@ -31,9 +38,19 @@ export const BlogView = ({ blogData }: { blogData: Blog }) => {
         className="mt-4 w-full aspect-video object-cover"
       />
       <h2 className="max-sm:text-xl max-md:text-2xl mt-2">{title}</h2>
-      <p className="text-[12px] text-primary/60 mt-4">
-        {dayjs(publishedAt).format("ddd, MMMM D,YYYY")}
-      </p>
+      <div className="w-full flex justify-between items-center">
+        <p className="text-[12px] text-primary/60 mt-4">
+          {dayjs(publishedAt).format("ddd, MMMM D,YYYY")}
+        </p>
+        {author._id === userId && (
+          <Link
+            href={`/update/${_id}`}
+            className="text-sm px-4 py-1 rounded-full bg-primary/10"
+          >
+            Edit
+          </Link>
+        )}
+      </div>
       <BlogIntraction
         profile={profile_img}
         username={username}

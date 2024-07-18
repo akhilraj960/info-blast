@@ -169,7 +169,7 @@ export default function WritePage() {
       setTextEditor(editor);
     };
 
-    if (editorState === "editor") {
+    if (editorState === "editor" && content) {
       initEditor();
     }
 

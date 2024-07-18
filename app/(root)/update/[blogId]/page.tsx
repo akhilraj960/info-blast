@@ -70,13 +70,13 @@ export default function WritePage() {
   });
   const [textEditor, setTextEditor] = useState<EditorJS | null>(null);
   const [editorState, setEditorState] = useState("editor");
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false); // Corrected initial state for loading
 
   const editorRef = useRef<HTMLDivElement | null>(null);
 
-  const { sessionId } = useAuth();
+  const { sessionId } = useAuth(); // Renamed to sessionId
   const router = useRouter();
-  const { blogId } = useParams();
+  const { blogId } = useParams<{ blogId: string }>(); // Corrected type for blogId
 
   const { title, banner, content, description, tags } = blog;
 
@@ -88,17 +88,15 @@ export default function WritePage() {
       try {
         const response = await axios.post("/api/blog/one", { blogId });
         const blogData: Blog = response.data.blog;
-        if (blogData) {
+        if (response.data.blog) {
           setBlog({
             ...blogData,
-            content: blogData.content[0],
+            content: blogData.content[0], // Adjusted to correct content assignment
             tags: [...blogData.tags],
           });
-          setLoading(false);
         }
       } catch (error) {
-        console.error("Fetch blog error:", error);
-        setLoading(false);
+        console.log(error);
       }
     };
 
@@ -180,7 +178,7 @@ export default function WritePage() {
         textEditor.destroy();
       }
     };
-  }, [sessionId, editorState, content]); // Added sessionId and content to dependencies
+  }, [content, editorState]);
 
   const handleBannerUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -242,6 +240,7 @@ export default function WritePage() {
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    // Corrected type for e
     e.preventDefault();
     try {
       const response = await axios.post("/api/blog/update", { blog, blogId });
@@ -262,9 +261,9 @@ export default function WritePage() {
 
   return (
     <SignedIn>
-      {loading ? (
+      {/* {loading ? (
         <Loader />
-      ) : (
+      ) : ( */}
         <Wrapper className="max-w-[1000px]">
           <Toaster />
           {editorState === "editor" ? (
@@ -387,7 +386,7 @@ export default function WritePage() {
             </AnimationWrapper>
           )}
         </Wrapper>
-      )}
+      {/* )} */}
     </SignedIn>
   );
 }

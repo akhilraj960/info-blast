@@ -184,7 +184,7 @@ export default function WritePage() {
 
     return () => {
       if (editorInstanceRef.current) {
-        editorInstanceRef.current.destroy();
+        editorInstanceRef.current.destroy?.();
         editorInstanceRef.current = null;
       }
     };
@@ -295,9 +295,9 @@ export default function WritePage() {
               </div>
               <textarea
                 value={title}
-                placeholder="Blog Title"
+                placeholder="Title"
                 onChange={(e) => setBlog({ ...blog, title: e.target.value })}
-                className="mt-10 text-4xl font-semibold w-full bg-transparent p-2 rounded-md outline-none overflow-hidden resize-none"
+                className="text-5xl font-semibold w-full bg-transparent p-2 rounded-md outline-none overflow-hidden resize-none"
               />
               <div className="mt-6" id="editorjs" ref={editorRef}></div>
               <Textarea

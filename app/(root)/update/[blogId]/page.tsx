@@ -70,8 +70,10 @@ export default function WritePage() {
   });
   const [textEditor, setTextEditor] = useState<EditorJS | null>(null);
   const [editorState, setEditorState] = useState("editor");
+  const [loading, setLoading] = useState(true);
 
   const editorRef = useRef<HTMLDivElement | null>(null);
+  const editorInstanceRef = useRef<EditorJS | null>(null);
 
   const { sessionId } = useAuth();
   const router = useRouter();
@@ -87,15 +89,17 @@ export default function WritePage() {
       try {
         const response = await axios.post("/api/blog/one", { blogId });
         const blogData: Blog = response.data.blog;
-        if (response.data.blog) {
+        if (blogData) {
           setBlog({
             ...blogData,
-            content: blogData.content[0], // Adjusted to correct content assignment
+            content: blogData.content[0],
             tags: [...blogData.tags],
           });
         }
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching blog:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -107,7 +111,15 @@ export default function WritePage() {
   }, [sessionId, router, blogId]);
 
   useEffect(() => {
+    if (!sessionId) {
+      return;
+    }
+
     const initEditor = async () => {
+      if (editorInstanceRef.current) {
+        return; // Avoid reinitializing the editor
+      }
+
       if (!editorRef.current) {
         console.error('Element with ID "editorjs" is missing.');
         return;
@@ -162,16 +174,18 @@ export default function WritePage() {
         },
       });
 
+      editorInstanceRef.current = editor;
       setTextEditor(editor);
     };
 
-    if (editorState === "editor" && content) {
+    if (editorState === "editor") {
       initEditor();
     }
 
     return () => {
-      if (textEditor?.isReady) {
-        textEditor.destroy();
+      if (editorInstanceRef.current) {
+        editorInstanceRef.current.destroy();
+        editorInstanceRef.current = null;
       }
     };
   }, [content, editorState]);
@@ -240,15 +254,13 @@ export default function WritePage() {
     try {
       const response = await axios.post("/api/blog/update", { blog, blogId });
 
-      console.log(response);
-
       if (response.data.success) {
-        toast.success("Success");
+        toast.success("Blog updated successfully");
         router.push(`/blog/${response.data.blogId}`);
       }
     } catch (error) {
-      console.error("Failed to Update blog:", error);
-      toast.error("Failed to Update blog");
+      console.error("Failed to update blog:", error);
+      toast.error("Failed to update blog");
     }
   };
 
@@ -256,128 +268,135 @@ export default function WritePage() {
 
   return (
     <SignedIn>
-      <Wrapper className="max-w-[1000px]">
-        <Toaster />
-        {editorState === "editor" ? (
-          <AnimationWrapper className="mt-4 min-h-96">
-            <div className="relative aspect-video bg-white border-2">
-              <label htmlFor="uploadBanner" className="absolute inset-0">
-                <Image
-                  src={mainBanner}
-                  alt="banner"
-                  fill
-                  priority
-                  className={banner ? "rounded-md" : ""}
-                />
-                <Input
-                  type="file"
-                  id="uploadBanner"
-                  accept=".png,.jpeg,.jpg"
-                  hidden
-                  onChange={handleBannerUpload}
-                />
-              </label>
-            </div>
-            <textarea
-              value={title}
-              placeholder="Blog Title"
-              onChange={(e) => setBlog({ ...blog, title: e.target.value })}
-              className="mt-10 text-4xl resize-none font-medium h-20 bg-transparent outline-none leading-tight placeholder-opacity-40 w-full overflow-y-hidden"
-            />
-            <hr className="my-10" />
-            <div
-              ref={editorRef}
-              id="editorjs"
-              className="dark:text-black bg-white rounded-md p-2"
-            />
-            <Button
-              onClick={handlePublish}
-              className="rounded-full w-full mt-8 capitalize"
-            >
-              Update
-            </Button>
-            <div className="my-10"></div>
-          </AnimationWrapper>
-        ) : (
-          <AnimationWrapper>
-            <div>
-              <Image
-                src={banner}
-                width={600}
-                height={600}
-                alt="banner image"
-                className="w-full aspect-video rounded-lg overflow-hidden mt-4"
+      {loading ? (
+        <Loader />
+      ) : (
+        <Wrapper className="max-w-[1000px]">
+          <Toaster />
+          {editorState === "editor" ? (
+            <AnimationWrapper className="mt-4 min-h-96">
+              <div className="relative aspect-video bg-white border-2">
+                <label htmlFor="uploadBanner" className="absolute inset-0">
+                  <Image
+                    src={mainBanner}
+                    alt="banner"
+                    fill
+                    priority
+                    className={banner ? "rounded-md" : ""}
+                  />
+                  <Input
+                    type="file"
+                    id="uploadBanner"
+                    accept=".png,.jpeg,.jpg"
+                    hidden
+                    onChange={handleBannerUpload}
+                  />
+                </label>
+              </div>
+              <textarea
+                value={title}
+                placeholder="Blog Title"
+                onChange={(e) => setBlog({ ...blog, title: e.target.value })}
+                className="mt-10 text-4xl font-semibold w-full bg-transparent p-2 rounded-md outline-none overflow-hidden resize-none"
               />
-            </div>
-            <h1 className="text-4xl font-medium mt-2 leading-tight line-clamp-2">
-              {title}
-            </h1>
-
-            <p className="line-clamp-2 text-xl leading-7 mt-4">
-              {description}
-            </p>
-
-            <form onSubmit={handleSubmit}>
-              <div className="mt-6">
-                <p className="text-gray-700 mb-2">Blog Title</p>
-                <Input
-                  type="text"
-                  value={title}
-                  onChange={(e) =>
-                    setBlog({ ...blog, title: e.target.value })
-                  }
-                  placeholder="Blog Title"
-                  className="w-full bg-transparent p-2 rounded outline-none"
+              <div className="mt-6" id="editorjs" ref={editorRef}></div>
+              <Textarea
+                value={description}
+                onChange={(e) =>
+                  setBlog({ ...blog, description: e.target.value })
+                }
+                placeholder="Write a short description"
+                className="dark:text-black bg-white rounded-md p-2"
+              />
+              <Button
+                onClick={handlePublish}
+                className="rounded-full w-full mt-8 capitalize"
+              >
+                Update
+              </Button>
+              <div className="my-10"></div>
+            </AnimationWrapper>
+          ) : (
+            <AnimationWrapper>
+              <div>
+                <Image
+                  src={banner}
+                  width={600}
+                  height={600}
+                  alt="banner image"
+                  className="w-full aspect-video rounded-lg overflow-hidden mt-4"
                 />
-                <p className="text-gray-700 mb-2 mt-9">
-                  Short description about your blog.
-                </p>
-                <Textarea
-                  placeholder="write a short description"
-                  value={description}
-                  maxLength={characterLimit}
-                  onChange={(e) => {
-                    setBlog({ ...blog, description: e.target.value });
-                  }}
-                  className="h-48 sm:h-40"
-                />
-                <p className="text-sm text-right text-gray-700">
-                  {characterLimit - description.length} Characters left
-                </p>
+              </div>
+              <h1 className="text-4xl font-medium mt-2 leading-tight line-clamp-2">
+                {title}
+              </h1>
 
-                <p className="text-gray-700 mt-9 mb-2 text-sm">
-                  Tags - (Helps searching and ranking your blog post.)
-                </p>
+              <p className="line-clamp-2 text-xl leading-7 mt-4">
+                {description}
+              </p>
 
-                <div className="relative p-2 pb-4 bg-transparent">
+              <form onSubmit={handleSubmit}>
+                <div className="mt-6">
+                  <p className="text-gray-700 mb-2">Blog Title</p>
                   <Input
                     type="text"
-                    placeholder="Tags"
-                    className="sticky top-0 left-0 pl-4 py-2 w-full mb-3"
-                    onKeyDown={handleKeyDown}
+                    value={title}
+                    onChange={(e) =>
+                      setBlog({ ...blog, title: e.target.value })
+                    }
+                    placeholder="Blog Title"
+                    className="w-full bg-transparent p-2 rounded outline-none"
                   />
-                  <div className="flex flex-wrap w-full">
-                    {tags.map((value, index) => (
-                      <div
-                        key={index}
-                        className="relative w-full flex p-2 mt-2 mr-2 pr-8 rounded-full gap-1 items-center px-5"
-                      >
-                        <p className="outline-none">#{value}</p>
-                        <button onClick={() => handleTagDelete(value)}>
-                          <Cross2Icon />
-                        </button>
-                      </div>
-                    ))}
+                  <p className="text-gray-700 mb-2 mt-9">
+                    Short description about your blog.
+                  </p>
+                  <Textarea
+                    placeholder="write a short description"
+                    value={description}
+                    maxLength={characterLimit}
+                    onChange={(e) => {
+                      setBlog({ ...blog, description: e.target.value });
+                    }}
+                    className="h-48 sm:h-40"
+                  />
+                  <p className="text-sm text-right text-gray-700">
+                    {characterLimit - description.length} Characters left
+                  </p>
+
+                  <p className="text-gray-700 mt-9 mb-2 text-sm">
+                    Tags - (Helps searching and ranking your blog post.)
+                  </p>
+
+                  <div className="relative p-2 pb-4 bg-transparent">
+                    <Input
+                      type="text"
+                      placeholder="Tags"
+                      className="sticky top-0 left-0 pl-4 py-2 w-full mb-3"
+                      onKeyDown={handleKeyDown}
+                    />
+                    <div className="flex flex-wrap w-full">
+                      {tags.map((value, index) => (
+                        <div
+                          key={index}
+                          className="relative w-full flex p-2 mt-2 mr-2 pr-8 rounded-full gap-1 items-center px-5"
+                        >
+                          <p className="outline-none">#{value}</p>
+                          <button onClick={() => handleTagDelete(value)}>
+                            <Cross2Icon />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
+                  <Button type="submit" className="w-full mb-8">
+                    Update
+                  </Button>
                 </div>
-                <Button type="submit" className="w-full mb-8">
-                  Update
-                </Button>
-              </div>
-            </form>
-          </AnimationWrapper>
-        )}
-      </Wrapper>
+              </form>
+            </AnimationWrapper>
+          )}
+        </Wrapper>
+      )}
     </SignedIn>
   );
 }

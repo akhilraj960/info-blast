@@ -300,14 +300,14 @@ export default function WritePage() {
                 className="text-5xl font-semibold w-full bg-transparent p-2 rounded-md outline-none overflow-hidden resize-none"
               />
               <div className="mt-6" id="editorjs" ref={editorRef}></div>
-              <Textarea
+              {/* <Textarea
                 value={description}
                 onChange={(e) =>
                   setBlog({ ...blog, description: e.target.value })
                 }
                 placeholder="Write a short description"
                 className="dark:text-black bg-white rounded-md p-2"
-              />
+              /> */}
               <Button
                 onClick={handlePublish}
                 className="rounded-full w-full mt-8 capitalize"

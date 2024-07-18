@@ -108,78 +108,80 @@ export default function WritePage() {
     }
   }, [sessionId, router, blogId]);
 
-  useEffect(() => {
-    if (!sessionId) {
-      return;
-    }
-    const initEditor = async () => {
-      if (!editorRef.current) {
-        console.error('Element with ID "editorjs" is missing.');
+  if (!loading) {
+    useEffect(() => {
+      if (!sessionId) {
         return;
       }
+      const initEditor = async () => {
+        if (!editorRef.current) {
+          console.error('Element with ID "editorjs" is missing.');
+          return;
+        }
 
-      const { default: EditorJS } = await import("@editorjs/editorjs");
-      const { default: Header } = await import("@editorjs/header");
-      const { default: List } = await import("@editorjs/list");
-      const { default: Marker } = await import("@editorjs/marker");
-      const { default: ImageTool } = await import("@editorjs/image");
-      const { default: Embed } = await import("@editorjs/embed");
-      const { default: Quote } = await import("@editorjs/quote");
+        const { default: EditorJS } = await import("@editorjs/editorjs");
+        const { default: Header } = await import("@editorjs/header");
+        const { default: List } = await import("@editorjs/list");
+        const { default: Marker } = await import("@editorjs/marker");
+        const { default: ImageTool } = await import("@editorjs/image");
+        const { default: Embed } = await import("@editorjs/embed");
+        const { default: Quote } = await import("@editorjs/quote");
 
-      const editor = new EditorJS({
-        holder: editorRef.current,
-        data: content,
-        placeholder: "Write your blog here.",
-        tools: {
-          header: {
-            class: Header,
-            config: {
-              placeholder: "Type Heading...",
-              levels: [2, 3],
-              defaultLevel: 2,
-            },
-          },
-          list: {
-            class: List,
-            inlineToolbar: true,
-          },
-          marker: {
-            class: Marker,
-          },
-          image: {
-            class: ImageTool,
-            config: {
-              uploader: {
-                uploadByUrl: async (url: string) => ({
-                  success: 1,
-                  file: { url },
-                }),
-                uploadByFile: uploadImage,
+        const editor = new EditorJS({
+          holder: editorRef.current,
+          data: content,
+          placeholder: "Write your blog here.",
+          tools: {
+            header: {
+              class: Header,
+              config: {
+                placeholder: "Type Heading...",
+                levels: [2, 3],
+                defaultLevel: 2,
               },
             },
+            list: {
+              class: List,
+              inlineToolbar: true,
+            },
+            marker: {
+              class: Marker,
+            },
+            image: {
+              class: ImageTool,
+              config: {
+                uploader: {
+                  uploadByUrl: async (url: string) => ({
+                    success: 1,
+                    file: { url },
+                  }),
+                  uploadByFile: uploadImage,
+                },
+              },
+            },
+            embed: {
+              class: Embed,
+            },
+            quote: {
+              class: Quote,
+            },
           },
-          embed: {
-            class: Embed,
-          },
-          quote: {
-            class: Quote,
-          },
-        },
-      });
+        });
 
-      setTextEditor(editor);
-    };
+        setTextEditor(editor);
+      };
 
-    if (editorState === "editor") {
-      initEditor();
-    }
-
-    return () => {
-      if (textEditor?.isReady) {
-        textEditor.destroy();
+      if (editorState === "editor") {
+        initEditor();
       }
-    };
-  }, [content, editorState]);
+
+      return () => {
+        if (textEditor?.isReady) {
+          textEditor.destroy();
+        }
+      };
+    }, [content, editorState]);
+  }
 
   const handleBannerUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

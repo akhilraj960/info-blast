@@ -70,13 +70,13 @@ export default function WritePage() {
   });
   const [textEditor, setTextEditor] = useState<EditorJS | null>(null);
   const [editorState, setEditorState] = useState("editor");
-  const [loading, setLoading] = useState(false); // Corrected initial state for loading
+  const [loading, setLoading] = useState(false);
 
   const editorRef = useRef<HTMLDivElement | null>(null);
 
-  const { sessionId } = useAuth(); // Renamed to sessionId
+  const { sessionId } = useAuth();
   const router = useRouter();
-  const { blogId } = useParams<{ blogId: string }>(); // Corrected type for blogId
+  const { blogId } = useParams();
 
   const { title, banner, content, description, tags } = blog;
 
@@ -88,16 +88,17 @@ export default function WritePage() {
       try {
         const response = await axios.post("/api/blog/one", { blogId });
         const blogData: Blog = response.data.blog;
-        if (response.data.blog) {
+        if (blogData) {
           setBlog({
             ...blogData,
-            content: blogData.content[0], // Adjusted to correct content assignment
+            content: blogData.content[0],
             tags: [...blogData.tags],
           });
           setLoading(false);
         }
       } catch (error) {
-        console.log(error);
+        console.error("Fetch blog error:", error);
+        setLoading(false);
       }
     };
 
@@ -170,7 +171,7 @@ export default function WritePage() {
       setTextEditor(editor);
     };
 
-    if (editorState === "editor" && !loading) {
+    if (editorState === "editor") {
       initEditor();
     }
 
@@ -179,7 +180,7 @@ export default function WritePage() {
         textEditor.destroy();
       }
     };
-  }, [content, editorState]);
+  }, [sessionId, editorState, content]); // Added sessionId and content to dependencies
 
   const handleBannerUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -241,7 +242,6 @@ export default function WritePage() {
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    // Corrected type for e
     e.preventDefault();
     try {
       const response = await axios.post("/api/blog/update", { blog, blogId });
